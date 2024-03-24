@@ -1,0 +1,85 @@
+@import '../../../components/styles/variables.scss';
+
+.register_user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-top: 7rem;
+    background-color: $storm-white;
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      border: 1px solid $storm-blue;
+      border-radius: 5px;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+        
+      .form_input {
+        width: 100%;
+        margin-bottom: 20px;
+        label {
+             display: block;
+            font-size: 1rem;
+             font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .actions {
+            display: flex;
+             justify-content: space-between;
+            align-items: center;
+             margin: 20px;
+
+             .remember_me {
+                 display: flex;
+                 align-items: center;
+                 input {
+                    margin-right: 10px;
+                  }
+                label {
+                    font-size: 0.9rem;
+                    font-weight: 400;
+                }
+            }
+          }
+        }
+
+        .register {
+          
+          .link {
+            font-size: $storm-font-size-lg;
+            margin-left: 10px;
+            color: $storm-red;
+            cursor: pointer;
+          }
+        }
+
+        .register_user_form_button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: $storm-white;
+            background-color: $storm-gold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            &:hover {
+                background-color: $storm-gold;
+            }
+        }
+        .register_user_form_link {
+            margin-top: 20px;
+            text-align: center;
+            a {
+                color: $storm-gold;
+                text-decoration: none;
+                font-weight: 700;
+            }
+        }
+    }
+}

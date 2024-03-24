@@ -1,0 +1,25 @@
+@import '../../styles/variables.scss';
+// STYLING SUB ITEMS
+.sub_container {
+
+  .sub_items {
+    list-style: none;
+    text-decoration: none;
+
+    .buttons {
+      text-decoration: none;
+    }
+
+    .sub_items_btn {
+      text-decoration: none;
+      color: $storm-white;
+      font-size: 1.2rem;
+      font-weight: 600;
+
+      &:hover {
+        color: $storm-gold;
+        text-decoration: underline;
+      }
+    }
+  }
+}

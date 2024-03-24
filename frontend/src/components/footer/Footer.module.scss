@@ -1,0 +1,105 @@
+@import '../styles/variables.scss';
+
+.footer {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  background-color: $storm-blue;
+  bottom: 0;
+  z-index: 9999;
+
+  .footer_overlay {
+    position: absolute;
+    // display: flex;
+    width: 100%;
+    height: 500px;
+    background-color: rgba($storm-black, 0.5);
+    z-index: 2;
+
+    .footer_main {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      color: $storm-white;
+  
+      .footer_section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 25%;
+        padding: 15px;
+  
+        .footer_logo {
+          width: 150px;
+          height: 150px;
+          margin-bottom: 20px;
+  
+          .logo_img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+          }
+        }
+  
+        .section1_text {
+          width: 80%;
+          text-align: center;
+          font-size: $storm-font-size-lg;
+          font-family: $storm-rubik;
+        }
+  
+        .head {
+          font-size: $storm-font-size-xxl;
+          font-weight: $storm-font-weight-bolder;
+          color: $storm-gold;
+          text-decoration: dotted;
+        }
+  
+        .unordered {
+          font-size: $storm-font-size-lg;
+  
+          .list {
+            margin-bottom: 10px;
+            cursor: pointer;
+  
+            &:hover {
+              color: $storm-gold;
+            }
+          }
+        }
+
+        .contacts {
+          display: flex;
+          flex-direction: column;
+
+          .contact_item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+        }
+      }
+
+      .social {
+        margin: 20px;
+
+        .social_item {
+          margin-right: 25px;
+        }
+      }
+    }
+
+    .copyright {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      height: 60px;
+      background-color: rgba($storm-black, 0.5);
+      color: $storm-red;
+      font-size: $storm-font-size-lg;
+      font-weight: $storm-font-weight-bold;
+    }
+  }
+}

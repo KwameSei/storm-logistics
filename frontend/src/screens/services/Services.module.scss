@@ -1,0 +1,13 @@
+// STYLING ALL SERVICES DISPLAY
+.services_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .services_text {
+
+    .heading, .sub_heading {
+      text-align: center;
+    }
+  }
+}

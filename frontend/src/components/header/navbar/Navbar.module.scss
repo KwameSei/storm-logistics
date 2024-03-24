@@ -1,0 +1,120 @@
+@import '../../styles/variables.scss';
+
+// Key frames definition for blinking animation
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.main_menus {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 3.5rem;
+  left: 0;
+  width: 100%;
+  height: 6rem;
+  z-index: 9999;
+  padding: 0 2rem;
+  background-color: $storm-blue;
+
+  .contact_info {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: rgba($storm-black, 0.7);
+    color: $storm-white;
+  
+    .contacts {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      color: $storm-white;
+
+      .phone, .mail, .location {
+        display: flex;
+        align-items: center;
+        margin-left: 2rem;
+      }
+    }
+
+    .contact_info_buttons {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+
+  .menus_container {
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+
+    .logo_container {
+      display: flex;
+      align-items: center;
+
+      .img {
+        height: 70px;
+        width: 70px;
+        border-radius: 50%;
+      }
+    }
+
+    .menus {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      padding: 0;
+      margin: 0 8rem;
+
+      .item {
+        margin-left: 2rem;
+      }
+    }
+
+    // Styling hamburger menu
+
+    .burger_menu {
+      cursor: pointer;
+      font-size: 5rem;
+      display: none;
+    }
+    
+    &.show_menu {
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+
+      .item {
+        margin: 0;
+      }
+    }
+  }
+
+  .nav_buttons {
+    margin-right: 5%;
+
+    .button_items {
+      margin-left: 15px;
+    }
+
+    .blink_animation {
+      animation: blink 1s infinite;
+    }
+  }
+}

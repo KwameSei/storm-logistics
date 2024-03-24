@@ -1,0 +1,93 @@
+@import '../../../components/styles/variables.scss';
+
+.credibility {
+
+  .credibility_main {
+
+    .credibility_content {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      margin: 10px 0;
+      overflow: hidden;
+      background-color: white;
+
+      .credibility_background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+      }
+
+      .content_overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba($storm-gold, 0.7);
+        z-index: 2;
+
+        .content_sub1 {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          margin-top: 10%;
+
+          .heading {
+            font-family: $storm-roboto;
+            font-size: $storm-font-size-xxxl;
+            color: $storm-blue;
+          }
+
+          .sub_heading {
+            font-family: $storm-raleway;
+            font-size: $storm-font-size-lg;
+            color: $storm-white;
+            width: 55%;
+            text-align: center;
+            margin-top: 5px;
+          }
+        }
+
+        .content_sub2 {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 2%;
+
+          .text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 5px 50px;
+            color: $storm-white;
+            font-size: $storm-font-size-xl;
+            font-weight: $storm-font-weight-bolder;
+
+            span {
+              font-family: $storm-raleway;
+              font-size: $storm-font-size-xxl;
+              font-weight: $storm-font-weight-900;
+              color: $storm-blue;
+            }
+          }
+        }
+      }
+    }
+
+    .credibility_content2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 35rem;
+      background-color: $storm-white;
+    }
+  }
+}
