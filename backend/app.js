@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 
 import userRoutes from './routes/userRoutes.js';
+import shipmentRoutes from './routes/shipmentRoutes.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(morgan('dev'))
 // });
 
 app.use('/api/users', userRoutes);
+app.use('/api/shipment', shipmentRoutes);
 
 
 export default app;

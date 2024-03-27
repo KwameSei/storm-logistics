@@ -4,7 +4,7 @@ import { Footer, Header } from './components';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { Homepage, AllServicesDisplay, TrackShipment, RegisterUser } from './screens';
+import { Homepage, AllServicesDisplay, CreateShipment, TrackShipment, RegisterUser } from './screens';
 
 import './App.css'
 import { useSelector } from 'react-redux';
@@ -54,6 +54,7 @@ function App() {
               <Route path="/" element={<Homepage />} />
               <Route path="/all-services-display" element={<AllServicesDisplay />} />
               <Route path="/track-shipment" element={<TrackShipment />} />
+              <Route path="/create-shipment" element={<CreateShipment />} />
               <Route path="/user-register" element={<RegisterUser />} />
             </>
           )}
