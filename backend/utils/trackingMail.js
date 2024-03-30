@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 // Function to send email with tracking number
-const trackingMail = async (trackingNumber, userEmail) => {
+const trackingMail = async (courierId, userEmail) => {
   try {
     // Create a nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -21,7 +21,7 @@ const trackingMail = async (trackingNumber, userEmail) => {
       from: process.env.EMAIL_USER,
       to: userEmail,
       subject: 'Your Shipment Tracking Number',
-      text: `Your tracking number is: ${trackingNumber}. Please use this number to track your shipment.`
+      text: `Your tracking number is: ${courierId}. Please use this number to track your shipment.`
     };
 
     // Send email

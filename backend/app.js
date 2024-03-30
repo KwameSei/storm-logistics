@@ -6,6 +6,9 @@ import bodyParser from 'body-parser';
 
 import userRoutes from './routes/userRoutes.js';
 import shipmentRoutes from './routes/shipmentRoutes.js';
+import superAdminRoutes from './routes/superadminRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
+import courierLocationRoutes from './routes/courierLocationRoutes.js';
 
 dotenv.config();
 
@@ -25,6 +28,9 @@ app.use(morgan('dev'))
 
 app.use('/api/users', userRoutes);
 app.use('/api/shipment', shipmentRoutes);
+app.use('/api/superadmin', superAdminRoutes);
+app.use('/api/location', locationRoutes);
+app.use('/api/shipment-location', courierLocationRoutes);
 
 
 export default app;

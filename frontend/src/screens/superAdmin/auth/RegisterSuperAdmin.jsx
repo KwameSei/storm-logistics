@@ -10,22 +10,21 @@ import { authSuccess, underControl } from "../../../state-management/userState/u
 import classes from '../../../components/styles/auth.module.scss';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const RegisterUser = ({ situation }) => {
+const RegisterSuperAdmin = ({ situation }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const [openPopup, setOpenPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [title, setTitle] = useState('Login')
   const [toggle, setToggle] = useState(false);
   // const [error, setError] = useState('');
 
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [usernameError, setUsernameError] = useState(false);
+  const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
@@ -37,10 +36,12 @@ const RegisterUser = ({ situation }) => {
   const status = useSelector((state) => state.user.status);
   const error = useSelector((state) => state.user.error);
   const token = useSelector((state) => state.user.token);
-  const role = 'User';
+
+  console.log('Super admin role: ', currentRole);
+  console.log('Supper admin current user: ', currentUser);
 
   const URL = import.meta.env.VITE_SERVER_URL;
-
+  const role = currentRole || 'SuperAdmin';
   const isLoggedIn = !isRegistered
 
   // Use useEffect to change the title of the page
@@ -49,29 +50,29 @@ const RegisterUser = ({ situation }) => {
   }, [isRegistered]);
 
   const fields = {
-    username,
+    name,
     email,
     password,
     confirmPassword,
-    role
+    role: currentRole
   }
 
-  // Register User
-  const registerUser = async (e) => {
+  // Register Super Admin
+  const registerSuperAdmin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const username = e.target.username.value;
+    const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
 
-    if (username === '' || username === null || username === undefined || username.length < 3 || username.length > 50) {
-      setUsernameError(true);
+    if (name === '' || name === null || name === undefined || name.length < 3 || name.length > 50) {
+      setNameError(true);
       setLoading(false);
-      return toast.error('Username is required and must be between 3 and 50 characters');
+      return toast.error('Name is required and must be between 3 and 50 characters');
     } else {
-      setUsernameError(false);
+      setNameError(false);
     }
 
     if (email === '' || email === null || email === undefined || email.length < 3 || email.length > 50) {
@@ -99,7 +100,7 @@ const RegisterUser = ({ situation }) => {
     }
 
     try {
-      const res = await axios.post(`${URL}/api/users/register-user/${role}`, fields, {
+      const res = await axios.post(`${URL}/api/superadmin/register-superadmin/${role}`, fields, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` || `Bearer ${currentUser.token || ''}`
@@ -107,13 +108,13 @@ const RegisterUser = ({ situation }) => {
       });
       console.log('API response', res);
 
-      const user = res.data;
-      console.log('User', user);
+      const admin = res.data;
+      console.log('User', admin);
 
-      dispatch(authSuccess(user));
+      dispatch(authSuccess(admin));
+      toast.success('Super admin registered successfully');
       setLoading(false);
-      toast.success('User registered successfully');
-      navigate('/user-dashboard');      
+      navigate('/superadmin-dashboard');      
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -121,7 +122,7 @@ const RegisterUser = ({ situation }) => {
     }
   }
 
-  const loginUser = async (e) => {
+  const loginSuperAdmin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -145,39 +146,43 @@ const RegisterUser = ({ situation }) => {
     }
 
     try {
-      const res = await axios.post(`${URL}/api/users/login-user/${role}`, fields, {
+      const res = await axios.post(`${URL}/api/superadmin/login-superadmin/${role}`, fields, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` || `Bearer ${currentUser.token || ''}`
         },
       });
 
+      console.log('Response after super admin login: ', res)
+
       if (res.data.success) {
         // Extract the token from the response
         const token = res.data.token
 
         // Extract the role from the response
-        const userRole = res.data.data?.role;
-        console.log('userRole: ', userRole)
+        const adminRole = res.data.data?.role;
+        console.log('adminRole: ', adminRole)
         
 
         // Store the token and role in the local storage
         localStorage.setItem('token', token);
         localStorage.setItem('currentRole', currentRole)
 
-        const user = res.data;
-        console.log('User', user);
+        const admin = res.data;
+        console.log('User', admin);
 
-        dispatch(authSuccess(user, userRole));
+        dispatch(authSuccess(admin, adminRole));
         setLoading(false);
-        toast.success('User logged in successfully');
-        navigate('/user-dashboard');
+        toast.success('Super admin logged in successfully');
+        navigate('/superadmin-dashboard');
       } else {
         navigate('/')
       }
     } catch (error) {
       console.log(error);
       toast.error(error.message);
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   }
@@ -186,9 +191,9 @@ const RegisterUser = ({ situation }) => {
     e.preventDefault();
     
     if (isRegistered) {
-      registerUser(e);
+      registerSuperAdmin(e);
     } else {
-      loginUser(e);
+      loginSuperAdmin(e);
     }
   }
 
@@ -217,6 +222,7 @@ const RegisterUser = ({ situation }) => {
           variant="outlined"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
         />
         <TextField
           error={passwordError}
@@ -273,15 +279,15 @@ const RegisterUser = ({ situation }) => {
             }}
           />
           <TextField
-            error={usernameError}
-            helperText={usernameError && 'Name must be between 3 and 50 characters'}
+            error={nameError}
+            helperText={nameError && 'Name must be between 3 and 50 characters'}
             required
             className={classes.form_input}
-            id="username"
-            label="Username"
+            id="name"
+            label="name"
             variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           </>
         )}
@@ -331,4 +337,4 @@ const RegisterUser = ({ situation }) => {
   )
 }
 
-export default RegisterUser;
+export default RegisterSuperAdmin;
