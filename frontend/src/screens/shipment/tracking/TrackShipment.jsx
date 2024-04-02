@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TextField, Button, CircularProgress } from '@mui/material';
 import { Search } from '@mui/icons-material';
+import { BlueButton } from '../../../components/ButtonStyled';
 import ShipmentService from '../../services/ShipmentService';
 import ShipmentDetails from './ShipmentDetails';
 
@@ -28,23 +29,28 @@ const TrackShipment = () => {
 
   return (
     <div className={classes.tracking}>
-      <h1>Track Shipment</h1>
-      <TextField
-        label="Tracking Number"
-        variant="outlined"
-        value={trackingNumber}
-        onChange={(e) => setTrackingNumber(e.target.value)}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<Search />}
-        onClick={handleSearch}
-      >
-        Search
-      </Button>
-      {loading && <CircularProgress />}
-      {shipment && <ShipmentDetails shipment={shipment} />}
+      <div className={classes.tracking_container}>
+        <h1>Track Shipment</h1>
+        <div className={classes.search}>
+          <TextField
+            label="Tracking Number"
+            variant="outlined"
+            value={trackingNumber}
+            onChange={(e) => setTrackingNumber(e.target.value)}
+            className={classes.tracking_number}
+          />
+          <BlueButton
+            variant="contained"
+            color="primary"
+            startIcon={<Search />}
+            onClick={handleSearch}
+          >
+            Search
+          </BlueButton>
+        </div>
+        {loading && <CircularProgress />}
+        {shipment && <ShipmentDetails shipment={shipment} />}
+      </div>
     </div>
   );
 }

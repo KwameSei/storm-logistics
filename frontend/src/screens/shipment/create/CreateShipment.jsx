@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Box, CircularProgress, Container, Grid, Typography, TextField, DialogActions, MenuItem, InputLabel, Select, FormControl } from '@mui/material';
 import { BlueButton } from '../../../components/ButtonStyled';
 import { CountryDropdown } from '../../../components';
+import { getShipmentSuccess } from '../../../state-management/shipmentState/shipmentSlice';
 
 import classes from './CreateShipment.module.scss';
 
@@ -25,6 +26,11 @@ const CreateShipment = () => {
   const [recipientPhone, setRecipientPhone] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
   const [weight, setWeight] = useState('');
+  const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
+  const [distance, setDistance] = useState('');
+  const [shippingCost, setShippingCost] = useState('');
+  const vatRate = 17.5; // VAT rate is fixed at 17.5%
+  const [totalCost, setTotalCost] = useState('');
   const [type, setType] = useState('');
   const [departureDate, setDepartureDate] = useState('');
   const [origin, setOrigin] = useState({ country: '', state: '', city: '' });
@@ -45,6 +51,11 @@ const CreateShipment = () => {
     item,
     type,
     weight,
+    dimensions,
+    distance,
+    shippingCost,
+    vatRate,
+    totalCost,
     recipientName,
     recipientPhone,
     recipientEmail,
@@ -55,12 +66,54 @@ const CreateShipment = () => {
     estimatedDelivery,
   };
 
+  // useEffect to calculate shipping cost, total cost, 
+  // and VAT rate whenever form fields change
+
+  useEffect(() => {
+    if (weight && dimensions.length && dimensions.width && dimensions.height && distance) {
+      const calculatedShippingCost = calculateShippingCost(weight, dimensions, distance);
+      const calculatedTotalCost = calculateTotalCost(calculatedShippingCost, vatRate);
+
+      setShippingCost(calculatedShippingCost.toFixed(2)); // Round off to 2 decimal places
+      setTotalCost(calculatedTotalCost.toFixed(2));
+    }
+  }, [weight, dimensions, distance, vatRate]);
+
+  const calculateShippingCost = (weight, dimensions, distance) => {
+    const ratePerKg = 21;
+    const weightCost = weight * ratePerKg;
+    const dimensionCost = dimensions.length * dimensions.width * dimensions.height * 0.1;
+    const distanceCost = distance * 0.8;
+    const shippingCost = weightCost + dimensionCost + distanceCost;
+
+    return shippingCost;
+  };
+
+  const calculateTotalCost = (shippingCost, vatRate) => {
+    const vat = (vatRate / 100) * shippingCost;
+    const totalCost = shippingCost + vat;
+
+    return totalCost;
+  };
+
   const createShipment = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await axios.post(`${URL}/api/shipment/create-shipment`, fields, {
+      const response = await axios.post(`${URL}/api/shipment/create-shipment`, 
+      {
+        ...fields,
+        userId: currentUser?.data?._id,
+        status: 'Pending',
+        approvedByAdmin: false,
+        senderMail: senderMail,
+        senderName: senderName,
+        senderPhone: senderPhone,
+        shippingCost: shippingCost,
+        vatRate: vatRate,
+        totalCost: totalCost,
+      }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -74,10 +127,13 @@ const CreateShipment = () => {
 
       dispatch(getShipmentSuccess(shipmentData));
       toast.success('Shipment successfully created')
-      navigate('/track-shipment');
+      console.log('Before Navigation');
+      navigate('/shipment-creation-success');
+      console.log('After Navigation');
       setLoading(false);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create shipment');
+      console.error('Error creating shipment:', error);
+      toast.error(error?.data || 'Failed to create shipment');
       setLoading(false);
     }
   };
@@ -86,7 +142,31 @@ const CreateShipment = () => {
     e.preventDefault();
 
     // Validate form fields
-    if (!senderMail || !item || !recipientName || !recipientPhone || !departureDate || !origin.country || !origin.state || !origin.city || !destination.country || !destination.state || !destination.city || !currentLocation || !estimatedDelivery) {
+    if (
+      !senderMail || 
+      !item || 
+      !recipientName || 
+      !recipientPhone || 
+      !departureDate || 
+      !origin.country || 
+      !origin.state || 
+      !origin.city || 
+      !destination.country || 
+      !destination.state || 
+      !destination.city || 
+      !currentLocation || 
+      !estimatedDelivery ||
+      !type ||
+      !weight ||
+      !senderName ||
+      !senderPhone ||
+      !recipientEmail ||
+      !dimensions ||
+      !distance ||
+      !shippingCost ||
+      !vatRate ||
+      !totalCost
+      ) {
       return toast.error('All fields are required');
     }
 
@@ -107,6 +187,56 @@ const CreateShipment = () => {
 
   const selectTypeHandler = (e) => {
     setType(e.target.value);
+  }
+
+  // Event handlers to constrain users from entering invalid characters
+  const handleWeightChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setWeight(e.target.value);
+    }
+  };
+
+  const handleDistanceChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDistance(e.target.value);
+    }
+  }
+
+  const handleLengthDimensionChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDimensions({ ...dimensions, length: e.target.value });
+    }
+  }
+
+  const handleWidthDimensionChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDimensions({ ...dimensions, width: e.target.value });
+    }
+  }
+
+  const handleHeightDimensionChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDimensions({ ...dimensions, height: e.target.value });
+    }
+  }
+
+  const handlePhoneChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setSenderPhone(e.target.value);
+    }
+  }
+
+  const handleRecipientPhoneChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setRecipientPhone(e.target.value);
+    }
   }
 
   return (
@@ -218,13 +348,64 @@ const CreateShipment = () => {
               required
               id='weight'
               type='Number'
-              label='Weight of Item'
+              label='Weight of Item in Kg'
               variant='outlined'
               fullWidth
               margin='normal'
               value={weight}
-              onChange={(e) => setWeight(e.target.value)}
+              onChange={handleWeightChange}
             />
+            <TextField
+              required
+              type='Number'
+              id='length in cm'
+              label='Length'
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              value={dimensions.length}
+              onChange={handleLengthDimensionChange}
+            />
+            <TextField
+              required
+              type='Number'
+              id='width'
+              label='Width in cm'
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              value={dimensions.width}
+              onChange={handleWidthDimensionChange}
+            />
+            <TextField
+              required
+              type='Number'
+              id='height'
+              label='Height in cm'
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              value={dimensions.height}
+              onChange={handleHeightDimensionChange}
+            />
+            <TextField
+              required
+              type='Number'
+              id='distance in km'
+              label='Distance'
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              value={distance}
+              onChange={handleDistanceChange}
+            />
+            {/* <TextField
+              label='VAT Rate (%)'
+              type='number'
+              value={vatRate}
+              onChange={(e) => setVatRate(e.target.value)}
+              required
+            /> */}
             <TextField
               required
               id='departureDate'
@@ -301,6 +482,11 @@ const CreateShipment = () => {
               placeholderText='Select Estimated Delivery Date'
               backgroundColor='white'
             />
+
+            <Typography>Shipping Cost: {shippingCost}</Typography>
+            <Typography>VAT Rate: {vatRate}</Typography>
+            <Typography>Total Cost: {totalCost}</Typography>
+
             <DialogActions>
               <BlueButton type='submit' disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : 'Create Shipment'}

@@ -11,10 +11,12 @@ import {
   AllServicesDisplay,
   CreateShipment,
   TrackShipment,
+  ShipmentCreationSuccess,
   RegisterUser,
   RegisterSuperAdmin,
   SuperAdminDashboard,
-  UpdateShipmentLocation
+  UpdateShipmentLocation,
+  ApprovePendingShipments
 } from './screens';
 
 import './App.css'
@@ -77,9 +79,11 @@ function App() {
               <Route path="/all-services-display" element={<AllServicesDisplay />} />
               <Route path="/track-shipment" element={<TrackShipment />} />
               <Route path="/create-shipment" element={<CreateShipment />} />
+              <Route path="/shipment-creation-success" element={<ShipmentCreationSuccess />} />;
               <Route path="/user-register" element={<RegisterUser />} />
               <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
               <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
+              <Route path="/approve-pending-shipments" element={<ApprovePendingShipments />} />
             </>
           )}
 
