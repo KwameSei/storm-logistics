@@ -6,7 +6,7 @@ import User from "../models/userSchema.js";
 import trackingMail from "../utils/trackingMail.js";
 import shipmentApprovalMail from "../utils/shipmentApprovalMail.js";
 import notifyAdminAboutShipment from "../utils/notifyAdminAboutShipment.js";
-import { initiatePayment } from "./paymentController.js";
+// import { initiatePayment } from "./paymentController.js";
 
 // Calculate shipping cost
 // const calculateShippingCost = (weight, dimensions, distance) => {
@@ -90,7 +90,7 @@ export const createShipment = async (req, res) => {
     // const totalCost = calculateShippingCostAndVAT(weight, dimensions, distance, vatRate);
 
     // Pass totalCost to initiatePayment
-    const initialPaymentResponse = await initiatePayment(totalCost, userEmail, trackingNumber);
+    // const initialPaymentResponse = await initiatePayment(totalCost, userEmail, trackingNumber);
 
     // Ensure database connection is established
     if (mongoose.connection.readyState !== 1) {
@@ -138,7 +138,7 @@ export const createShipment = async (req, res) => {
       status: 201,
       message: "Shipment created successfully",
       data: shipment,
-      initialPaymentResponse
+      // initialPaymentResponse
     });
   } catch (error) {
     console.error("Error creating shipment:", error);
@@ -177,8 +177,13 @@ export const approveShipment = async (req, res) => {
     // Save the updated shipment
     await shipment.save();
 
+    // Generate payment link with shipment id as a query parameter
+    // const paymentLink = `${process.env.CLIENT_URL}/api/payments/initiate-payment/?shipmentId=${shipment._id}`;
+    const shipmentId = shipment._id;
+    const paymentLink = `${process.env.CLIENT_URL}/checkout/${shipmentId}`;
+
     // Send email notification to user
-    await shipmentApprovalMail(shipment, senderMail);
+    await shipmentApprovalMail(shipment, senderMail, paymentLink);
 
     return res.status(200).json({
       success: true,

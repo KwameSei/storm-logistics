@@ -14,5 +14,9 @@ export { default as CreateShipment } from './shipment/create/CreateShipment';
 export { default as ShipmentCreationSuccess } from './shipment/shipmentSuccess/ShipmentCreationSuccess';
 export { default as ApprovePendingShipments } from './shipment/shipmentSuccess/ApprovePendingShipments';
 
+// PAYMENT
+export { default as CheckOut } from './payment/CheckOut';
+export { default as PaymentCallback } from './payment/PaymentCallback';
+
 // ADMIN / SUPER ADMIN
 export { default as SuperAdminDashboard } from './superAdmin/dashboard/SuperAdminDashboard';

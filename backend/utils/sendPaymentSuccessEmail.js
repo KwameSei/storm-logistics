@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
-// Function to send email with tracking number
-const shipmentApprovalMail = async (shipment, senderMail, paymentLink) => {
+// Function to send email on payment success
+const sendPaymentSuccessEmail = async (savedPayment, response) => {
   try {
     // Create a nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -19,13 +19,12 @@ const shipmentApprovalMail = async (shipment, senderMail, paymentLink) => {
     // Email options
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: senderMail,
-      subject: 'Your Shipment Approval',
+      to: response.customer.email,
+      subject: 'Payment Successful',
       html: `
-        <h1>Your Shipment Has Been Approved</h1>
-        <p>Your shipment with tracking number ${shipment.trackingNumber} has been approved by the admin.</p>
-        <p>Please proceed to make the payment to complete the shipment process.</p>
-        <p>Payment link: <a href="${paymentLink}">Make Payment</a></p>
+        <h1>Payment Successful</h1>
+        <p>Your payment of GHS ${savedPayment.amount} for your shipment has been successful.</p>
+        <p><br /> Thank you for using our service.</p>
       `,
     };
 
@@ -38,4 +37,4 @@ const shipmentApprovalMail = async (shipment, senderMail, paymentLink) => {
   }
 };
 
-export default shipmentApprovalMail;
+export default sendPaymentSuccessEmail;

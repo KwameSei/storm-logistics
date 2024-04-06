@@ -7,6 +7,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
+  CheckOut,
+  PaymentCallback,
   Homepage,
   AllServicesDisplay,
   CreateShipment,
@@ -84,6 +86,9 @@ function App() {
               <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
               <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
               <Route path="/approve-pending-shipments" element={<ApprovePendingShipments />} />
+              {/* <Route path="/checkout" element={<CheckOut />} /> */}
+              <Route path="/checkout/:shipmentId" element={<CheckOut />} />
+              <Route path="/payment-callback" element={<PaymentCallback />} />
             </>
           )}
 

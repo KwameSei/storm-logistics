@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/create-shipment', createShipment);
 router.get('/track/:trackingNumber', trackShipment);
 router.get('/get-all-shipments', getAllShipments);
-router.get('/get-Shipment-byId/:id', getShipmentById);
+router.get('/get-shipment-byId/:id', getShipmentById);
 router.get('/get-pending-shipments', getPendingShipments);
 router.put('/approve-shipment/:id', approveShipment);
 router.put('/update-shipment/:id', updateShipment);
