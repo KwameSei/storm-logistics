@@ -1,0 +1,39 @@
+@import '../../../components/styles/variables.scss';
+
+.dashboard {
+  margin-top: 10.5rem;
+  display: flex;
+  width: 95%;
+  margin-left: 2.5%;
+  justify-content: center;
+  background-color: $storm-white;
+  border-radius: 10px;
+  .container {
+    margin: 2rem 0;
+    .main_box {
+      .username {
+        text-align: center;
+        margin-bottom: 1rem;
+        span {
+          color: $storm-red;
+        }
+      }
+      .main_grid {
+        .sub_grid {
+          .paper {
+            .sub_box {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+              .icon {
+                width: 70%;
+                height: 250px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

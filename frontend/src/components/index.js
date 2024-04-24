@@ -8,4 +8,11 @@ export { default as Dropdown } from './header/menu/Dropdown';
 export { default as SubItems } from './header/menu/SubItems';
 export { default as Navbar } from './header/navbar/Navbar';
 
+// Sidebar
+export { default as Sidebar } from './sidebar/Sidebar';
+
 export { default as Footer } from './footer/Footer';
+
+// Custom table
+export { default as CustomTable } from './table/CustomTable';
+export { default as WaybillTable } from './table/WaybillTable';

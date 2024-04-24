@@ -40,15 +40,15 @@ const CountryDropdown = ({ onChange }) => {
     }
   }, [selectedCountry]);
 
-  useEffect(() => {
-    if (selectedState) {
-      const cityData = City.getCitiesOfState(selectedCountry, selectedState).map((city) => ({
-        name: city.name
-      }));
-      setCities(cityData);
-      setSelectedCity(cityData[0]?.name); // Select the first city by default
-    }
-  }, [selectedState]);
+  // useEffect(() => {
+  //   if (selectedState) {
+  //     const cityData = City.getCitiesOfState(selectedCountry, selectedState).map((city) => ({
+  //       name: city.name
+  //     }));
+  //     setCities(cityData);
+  //     setSelectedCity(cityData[0]?.name); // Select the first city by default
+  //   }
+  // }, [selectedState]);
 
   const handleCountryChange = (countryIsoCode) => {
     setSelectedCountry(countryIsoCode);
@@ -58,19 +58,19 @@ const CountryDropdown = ({ onChange }) => {
     setSelectedState(stateIsoCode);
   };
 
-  const handleCityChange = (cityName) => {
-    setSelectedCity(cityName);
-  };
+  // const handleCityChange = (cityName) => {
+  //   setSelectedCity(cityName);
+  // };
 
   useEffect(() => {
     if (onChange) {
       onChange({
         country: selectedCountry,
         state: selectedState,
-        city: selectedCity
+        // city: selectedCity
       });
     }
-  }, [selectedCountry, selectedState, selectedCity, onChange]);
+  }, [selectedCountry, selectedState, onChange]);
 
   return (
     <Container>
@@ -91,14 +91,14 @@ const CountryDropdown = ({ onChange }) => {
             ))}
           </Select>
         </Grid>
-        <Grid item xs={4}>
+        {/* <Grid item xs={4}>
           <Typography variant='subtitle1'>City</Typography>
           <Select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)}>
             {cities.map((city, index) => (
               <MenuItem key={index} value={city.name}>{city.name}</MenuItem>
             ))}
           </Select>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

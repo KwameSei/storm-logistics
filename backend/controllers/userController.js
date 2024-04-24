@@ -154,3 +154,366 @@ export const loginUser = async (req, res) => {
     })
   }
 }
+
+// Forgot password
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Validate email
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: 'Please provide an email'
+      })
+    }
+
+    // Convert email to lower case
+    const emailToLower = email.toLowerCase();
+
+    // Check if user exists
+    const user = await User.findOne({ email: emailToLower });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    // Generate reset token
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save();
+
+    // Create reset URL
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
+
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Password reset token',
+        message
+      });
+
+      res.status(200).json({
+        success: true,
+        status: 200,
+        message: `Email sent to: ${user.email}`
+      })
+    } catch (error) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+
+      await user.save();
+
+      return res.status(500).json({
+        success: false,
+        status: 500,
+        message: 'Email could not be sent'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Reset password
+export const resetPassword = async (req, res) => {
+  try {
+    // Get hashed token
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: 'Invalid token'
+      })
+    }
+
+    // Set new password
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      status: 201,
+      message: 'Password reset successful'
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Update user details
+export const updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    user.username = req.body.username || user.username;
+    user.email = req.body.email || user.email;
+    user.phone = req.body.phone || user.phone;
+    user.address = req.body.address || user.address;
+
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'User updated successfully',
+      data: updatedUser
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Get user profile
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: user
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Update user profile image
+export const updateUserProfileImage = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+
+      user.image = result.secure_url;
+      user.image_mimetype = req.file.mimetype;
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'User image updated successfully',
+      data: updatedUser
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Get all users
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    if (!users) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'No users found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: users
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Get user by ID
+export const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: user
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Delete user
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    await user.remove();
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'User deleted successfully'
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Update user role
+export const updateUserRole = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    user.role = req.body.role || user.role;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'User role updated successfully',
+      data: updatedUser
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Delete user profile image
+export const deleteUserProfileImage = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'User not found'
+      })
+    }
+
+    user.image = undefined;
+    user.image_mimetype = undefined;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'User image deleted successfully',
+      data: updatedUser
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}

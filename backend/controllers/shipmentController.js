@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import moment from "moment";
 import Shipment from "../models/shipmentSchema.js";
 import generateUniquetrackingNumber from "../models/shipmentSchema.js";
 import CourierLocation from "../models/courierLocationSchema.js";
@@ -6,6 +7,9 @@ import User from "../models/userSchema.js";
 import trackingMail from "../utils/trackingMail.js";
 import shipmentApprovalMail from "../utils/shipmentApprovalMail.js";
 import notifyAdminAboutShipment from "../utils/notifyAdminAboutShipment.js";
+// import { calculateImportDuty } from "./icumsController.js";
+// import { calculateShipmentCost } from "../utils/calculateShipmentCost.js";
+import Icums from "../models/icumsSchema.js";
 // import { initiatePayment } from "./paymentController.js";
 
 // Calculate shipping cost
@@ -44,6 +48,11 @@ import notifyAdminAboutShipment from "../utils/notifyAdminAboutShipment.js";
 //   return distanceCost;
 // };
 
+// Function to parse time string to a date
+const parsePickupTime = (time) => {
+  return moment(time, 'HH:mm').toDate();
+}
+
 // Create a new shipment
 export const createShipment = async (req, res) => {
   try {
@@ -51,16 +60,26 @@ export const createShipment = async (req, res) => {
       item,
       senderName,
       senderPhone,
+      senderAddress,
       type,
       weight,
-      dimensions,
+      // dimensions,
       vatRate,
       recipientName,
       recipientPhone,
       recipientEmail,
+      recipientAddress,
+      // pickup_time,
+      pickup_date,
+      delivery_mode,
+      carrier,
+      carrier_reference_number,
+      quantity,
       departureDate,
       origin,
+      originCity,
       distance,
+      destinationCity,
       totalCost,
       trackingNumber,
       status,
@@ -68,11 +87,15 @@ export const createShipment = async (req, res) => {
       destination,
       estimatedDelivery,
       currentLocation,
+      currentCity,
+      // hs_code,
+      cifValue
     } = req.body;
 
     console.log('Request Body:', req.body);
 
     const userEmail = req.body.senderMail;
+    const pickupTime = parsePickupTime(req.body.pickup_time);
 
     // Validate required fields
     if (!userEmail ||!item || !recipientName || !recipientPhone || !departureDate || !origin || !destination || !estimatedDelivery || !currentLocation) {
@@ -82,6 +105,8 @@ export const createShipment = async (req, res) => {
         message: "All required fields must be provided" 
       });
     }
+
+    const hsCode = await Icums.findOne({ hs_code: req.body.hs_code });
     
     // Calculate shipping cost
     // const shippingCost = calculateShippingCost(weight, dimensions, distance);
@@ -97,6 +122,35 @@ export const createShipment = async (req, res) => {
       return res.status(500).json({ message: "Database connection error" });
     }
 
+    // Calculate import costs using the calculateImportDuty function
+    // const importCosts = await calculateImportDuty(cifValue, hs_code);
+
+    // if (!importCosts.success) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     status: 404,
+    //     message: importCosts.message
+    //   });
+    // }
+
+    // Calculate shipping cost
+    // const shippingCost = calculateShipmentCost(shipment);
+
+    // if (!shippingCost.success) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     status: 404,
+    //     message: shippingCost.message
+    //   });
+    // }
+
+    // const totalShippingCost = shippingCost.data.baseRate + shippingCost.data.distanceCharge + shippingCost.data.weightCharge + shippingCost.data.carrierCharge + shippingCost.data.deliveryModeCharge;
+
+    // // Calculate total cost by summing up all the cost components
+    // const totalDutyCost = importCosts.data.importDuty + importCosts.data.vat + importCosts.data.otherDutiesAndCharges + importCosts.data.nhil;
+
+    // const totalCost = totalShippingCost + totalDutyCost;
+
     // Generate tracking number
     // const trackingNumber = generateUniquetrackingNumber();
 
@@ -105,9 +159,16 @@ export const createShipment = async (req, res) => {
       senderMail: userEmail,
       senderName,
       senderPhone,
+      senderAddress,
       type,
       weight,
-      dimensions,
+      pickup_time: pickupTime,
+      pickup_date,
+      delivery_mode,
+      carrier,
+      carrier_reference_number,
+      quantity,
+      // dimensions,
       distance,
       shippingCost,
       vatRate,
@@ -116,13 +177,29 @@ export const createShipment = async (req, res) => {
       recipientName,
       recipientPhone,
       recipientEmail,
+      recipientAddress,
       departureDate,
       trackingNumber,
       status: 'Pending', // Set default status here
       origin,
+      originCity,
       destination,
+      destinationCity,
       estimatedDelivery,
       currentLocation,
+      currentCity,
+      cifValue,
+      hs_code: hsCode,
+      // import_duty_rate: importCosts.data.importDuty,
+      // vatRate: importCosts.data.vat,
+      // nhil: importCosts.data.nhil,
+      // otherDutiesAndCharges: importCosts.data.otherDutiesAndCharges,
+      // baseRate: shippingCost.data.baseRate,
+      // distanceCharge: shippingCost.data.distanceCharge,
+      // weightCharge: shippingCost.data.weightCharge,
+      // carrierCharge: shippingCost.data.carrierCharge,
+      // deliveryModeCharge: shippingCost.data.deliveryModeCharge,
+      totalCost: totalCost
     });
 
     await shipment.save();
@@ -243,7 +320,8 @@ export const getPendingShipments = async (req, res) => {
 export const getShipmentById = async (req, res) => {
   try {
     const Id = req.params.id;
-    const shipment = await Shipment.findById(Id);
+    const shipment = await Shipment.findById(Id)
+      .populate('hs_code');
 
     if (!shipment) {
       return res.status(404).json({
@@ -313,7 +391,8 @@ export const getShipmentByTrackingNum = async (req, res) => {
 export const updateShipment = async (req, res) => {
   try {
     // Find the latest location of the courier based on the provided ID
-    const shipment = await Shipment.findById(req.params.id);
+    const shipment = await Shipment.findById(req.params.id)
+      .populate('hs_code');
 
     if (shipment) {
       shipment.trackingNumber = req.body.trackingNumber || shipment.trackingNumber;
@@ -323,11 +402,23 @@ export const updateShipment = async (req, res) => {
       shipment.departureDate = req.body.departureDate || shipment.departureDate;
       shipment.type = req.body.type || shipment.type;
       shipment.weight = req.body.weight || shipment.weight;
+      shipment.item = req.body.item || shipment.item;
+      shipment.quantity = req.body.quantity || shipment.quantity;
+      shipment.carrier = req.body.carrier || shipment.carrier;
+      shipment.carrier_reference_number = req.body.carrier_reference_number || shipment.carrier_reference_number;
+      shipment.delivery_mode = req.body.delivery_mode || shipment.delivery_mode;
+      shipment.pickup_date = req.body.pickup_date || shipment.pickup_date;
+      shipment.pickup_time = req.body.pickup_time || shipment.pickup_time;
+      shipment.shippingCost = req.body.shippingCost || shipment.shippingCost;
+      shipment.vatRate = req.body.vatRate || shipment.vatRate;
+      shipment.totalCost = req.body.totalCost || shipment.totalCost;
       shipment.senderMail = req.body.senderMail || shipment.senderMail;
       shipment.senderName = req.body.senderName || shipment.senderName;
+      shipment.senderAddress = req.body.senderAddress || shipment.senderAddress;
       shipment.senderPhone = req.body.senderPhone || shipment.senderPhone;
       shipment.recipientEmail = req.body.recipientEmail || shipment.recipientEmail;
       shipment.recipientPhone = req.body.recipientPhone || shipment.recipientPhone;
+      shipment.recipientAddress = req.body.recipientAddress || shipment.recipientAddress;
       shipment.recipientName = req.body.recipientName || shipment.recipientName;
       shipment.estimatedDelivery = req.body.estimatedDelivery || shipment.estimatedDelivery;
       shipment.currentLocation = req.body.currentLocation || shipment.currentLocation;

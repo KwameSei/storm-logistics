@@ -17,8 +17,9 @@ import {
   RegisterUser,
   RegisterSuperAdmin,
   SuperAdminDashboard,
+  UserDashboard,
   UpdateShipmentLocation,
-  ApprovePendingShipments
+  Four04
 } from './screens';
 
 import './App.css'
@@ -32,7 +33,6 @@ function App() {
 
   if (currentUser) {
     console.log('Data found in currentUser:', currentUser.data);
-    console.log('Admin found in currentUser:', currentUser.admin);
     
     // Check if the user is a Super Admin
     if (currentUser.data && currentUser.data.role === 'SuperAdmin') {
@@ -78,6 +78,7 @@ function App() {
           {currentRole == null && (
             <>
               <Route path="/" element={<Homepage />} />
+              <Route path="/home" element={<Homepage />} />
               <Route path="/all-services-display" element={<AllServicesDisplay />} />
               <Route path="/track-shipment" element={<TrackShipment />} />
               <Route path="/create-shipment" element={<CreateShipment />} />
@@ -85,21 +86,28 @@ function App() {
               <Route path="/user-register" element={<RegisterUser />} />
               <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
               <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
-              <Route path="/approve-pending-shipments" element={<ApprovePendingShipments />} />
               {/* <Route path="/checkout" element={<CheckOut />} /> */}
               <Route path="/checkout/:shipmentId" element={<CheckOut />} />
               <Route path="/payment-callback" element={<PaymentCallback />} />
+              <Route path='/*' element={<Four04 />} />
             </>
           )}
 
           {currentRole === 'SuperAdmin' && (
             <>
               <Route path="/superadmin-dashboard/*" element={<SuperAdminDashboard />} />
+              <Route path="/" element={<Homepage />} />
+              <Route path="/home" element={<Homepage />} />
+              <Route path='/*' element={<Four04 />} />
             </>
           )}
 
-          {currentRole === 'Admin' && (
+          {currentRole === 'User' && (
             <>
+              <Route path="/user-dashboard/*" element={<UserDashboard />} />
+              <Route path="/" element={<Homepage />} />
+              <Route path="/home" element={<Homepage />} />
+              <Route path='/*' element={<Four04 />} />
             </>
           )}
 

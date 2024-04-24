@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { toast } from 'react-toastify';
 import classes from './payment.module.scss';
+import { useSelector } from 'react-redux';
 
 const PaymentCallback = () => {
   const { shipmentId } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const URL = import.meta.env.VITE_SERVER_URL;
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const token = currentUser.data.token || localStorage.getItem('token');
+  const currentRole = useSelector((state) => state.user.currentUser.data.role);
 
   useEffect(() => {
     handlePaymentCallback(shipmentId);
@@ -42,6 +47,7 @@ const PaymentCallback = () => {
 
       if (paymentData.success) {
         toast.success('Payment successful');
+        navigate(`${currentRole.toLowerCase()}-dashboard/payment-success/${shipmentId}`);
       } else {
         toast.error('Payment failed');
       }

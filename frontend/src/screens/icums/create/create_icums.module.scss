@@ -1,0 +1,14 @@
+@import '../../../components/styles/variables.scss';
+
+.container {
+  display: flex;
+  align-items: center;
+  margin-top: 10rem;
+
+  .container_inner {
+    width: 95%;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: $storm-white;
+  }
+}

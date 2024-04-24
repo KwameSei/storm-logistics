@@ -2,14 +2,101 @@
 
 .shipment_container {
   margin: 11rem auto;
+  border-radius: 10px;
   background-color: $storm-white;
 
-  .grid_container {
+  .container {
+    margin-left: 5%;
 
     .shipment_form {
+      margin-top: 20px;
+      .shipment_form_title {
+        // text-align: center;
+        color: $storm-blue;
+        margin: 15px 0;
+      }
 
       form {
-        
+        .persons_info {
+          display: flex;
+          margin-bottom: 15px;
+          .persons_details {
+            .persons_info_title {
+              color: $storm-blue;
+            }
+
+            .text {
+              margin-right: 15px;
+            }
+          }
+        }
+
+        .select {
+          width: 20%;
+          margin-right: 15px;
+        }
+
+        .item_info {
+          display: flex;
+          flex-wrap: wrap;
+          // justify-content: space-between;
+          align-items: flex-start;
+
+          .select {
+            margin-top: 18px;
+          }
+
+          .text {
+            margin-right: 15px;
+          }
+        }
+
+        .item_info2 {
+          display: flex;
+          flex-wrap: wrap;
+          // justify-content: space-between;
+          align-items: flex-start;
+
+          .select {
+            margin-top: 18px;
+          }
+
+          .text {
+            margin-right: 15px;
+          }
+        }
+
+        .dates {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          // justify-content: space-between;
+          margin: 30px 0;
+
+          .date_item {
+            display: flex;
+            flex-direction: column;
+            margin-right: 30px;
+          }
+        }
+
+        .carrier_select {
+          width: 20%;
+          margin-bottom: 30px;
+        }
+
+        .country_states {
+
+          .select_country_states {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 15px;
+
+            .text {
+              width: 40%;
+            }
+          }
+        }
       }
     }
   }

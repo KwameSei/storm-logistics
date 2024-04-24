@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   status: 'idle',
+  user: null,
+  users: [],
   userInfo: [],
   tempUserInfo: [],
   error: null,
@@ -88,7 +90,19 @@ const userSlice = createSlice({
       state.response = action.payload;
       state.error = action.payload;
     },
-  }
+    getUser: (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.response = null;
+      state.error = null;
+    },
+    getUsers: (state, action) => {
+      state.loading = false;
+      state.users = action.payload;
+      state.response = null;
+      state.error = null;
+    },
+  },
 });
 
 export const {
@@ -104,6 +118,8 @@ export const {
   getFailure,
   getError,
   underControl,
+  getUser,
+  getUsers
 } = userSlice.actions;
 
 export const userReducer = userSlice.reducer;

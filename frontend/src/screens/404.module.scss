@@ -1,0 +1,28 @@
+@import '../components/styles/variables.scss';
+
+.four0four {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10%;
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 80%;
+  height: 100vh;
+  background-color: $storm-white;
+
+  .four0four_inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      font-size: $storm-font-size-xxxl;
+    }
+
+    h3 {
+      font-size: $storm-font-size-xl;
+    }
+  }
+}

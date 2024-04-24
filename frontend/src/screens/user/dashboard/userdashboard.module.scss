@@ -1,0 +1,10 @@
+@import '../../../components/styles/variables.scss';
+
+.dashboard {
+  margin-top: 10rem;
+
+  .dashboard_container {
+    width: 95%;
+    background-color: $storm-white;
+  }
+}

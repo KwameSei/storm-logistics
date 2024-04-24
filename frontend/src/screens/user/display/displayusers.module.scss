@@ -1,0 +1,39 @@
+@import '../../../components//styles/variables.scss';
+
+// STYLING GET ALL USERS
+.get_users {
+  margin-top: 8rem;
+}
+
+// STYLING A SINGLE USER
+.single_user {
+  display: flex;
+  justify-content: center;
+  margin-top: 11rem;
+
+  .user_inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+    padding: 2rem;
+    background-color: $storm-white;
+
+    .user_details {
+
+      .user_item {
+        display: flex;
+        align-items: center;
+
+        h3 {
+          margin-right: 1rem;
+        }
+
+        span {
+          text-align: left;
+        }
+      }
+    }
+  }
+}

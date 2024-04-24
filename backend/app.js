@@ -10,6 +10,7 @@ import superAdminRoutes from './routes/superadminRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import courierLocationRoutes from './routes/courierLocationRoutes.js';
+import icumsRoutes from './routes/icumsRoutes.js';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/superadmin', superAdminRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/shipment-location', courierLocationRoutes);
+app.use('/api/icums', icumsRoutes);
 
 
 export default app;

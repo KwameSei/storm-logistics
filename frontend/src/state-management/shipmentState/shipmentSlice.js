@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  shipment: null,
   shipments: [],
-  shipment: {},
   error: null,
   loading: false,
 };
@@ -11,8 +11,9 @@ const shipmentSlice = createSlice({
   name: 'shipment',
   initialState,
   reducers: {
-    getShipments(state) {
-      state.loading = true;
+    getShipments(state, action) {
+      state.shipments = action.payload;
+      state.loading = false;
     },
     getShipmentsSuccess(state, action) {
       state.shipments = action.payload;
@@ -22,8 +23,9 @@ const shipmentSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    getShipment(state) {
-      state.loading = true;
+    getShipment(state, action) {
+      state.shipment = action.payload;
+      state.loading = false;
     },
     getShipmentSuccess(state, action) {
       state.shipment = action.payload;

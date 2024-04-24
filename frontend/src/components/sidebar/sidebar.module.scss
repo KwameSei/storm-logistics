@@ -1,0 +1,230 @@
+@import '../styles/variables.scss';
+
+.sidebar {
+  position: relative;
+  margin-top: 9.5rem;
+  // height: calc(100vh - 9.5rem);
+  width: 260px;
+  left: 0;
+  padding: 15px 8px;
+  background-color: $storm-blue;
+  color: $storm-white;
+
+  .logo_content {
+
+    .logo {
+      display: flex;
+      align-items: center;
+      height: 50px;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .logo_name {
+        font-size: $storm-font-size-lg;
+        font-weight: $storm-font-weight-bolder;
+      }
+    }
+  }
+
+  .menu_icon {
+    position: absolute;
+    top: 4.5%;
+    left: 80%;
+    font-size: $storm-font-size-xxl;
+    margin-bottom: 35px;
+    cursor: pointer;
+    // transform: translate(-50%); // Centering the icon
+  }
+
+  .nav_list {
+    margin-top: 50px;
+    margin-left: 0;
+
+    .nav_item {
+      position: relative;
+      display: flex;
+      width: 100%;
+      list-style: none;
+      text-decoration: none;
+      font-size: $storm-font-size-lg;
+      height: 30px;
+      margin-bottom: 15px;
+      cursor: pointer;
+
+      .link {
+        display: flex;
+        align-items: center;
+        margin-left: 0;
+        text-decoration: none;
+        color: $storm-white;
+        transition: all 0.5s ease;
+        border-radius: 5px;
+        width: 100%;
+
+        &:hover {
+          color: $storm-blue;
+          background-color: $storm-white;
+        }
+
+        .search {
+          right: 0;
+          padding: 0 10px;
+          background-color: rgba($storm-white, 0.7);
+          border-radius: 5px;
+        }
+
+        .icon {
+          font-size: $storm-font-size-xxl;
+          margin-right: 10px;
+        }
+
+        // .dashboard {
+        //   margin-right: 5%;
+        // }
+
+        .dropdown_icon {
+          position: absolute;
+          right: 0;
+          font-size: $storm-font-size-xxl;
+        }
+      }
+
+      .tool_tip {
+        position: absolute;
+        top: -40%; /* Move tooltip above the nav_item */
+        left: 85%; /* Position the tooltip to the right of the nav_item */
+        width: 150px;
+        line-height: 30px; /* Adjust line height to vertically center text */
+        text-align: center;
+        padding: 5px;
+        background-color: $storm-white;
+        color: $storm-blue;
+        box-shadow: 0 5px 10px rgba($storm-black, 0.5);
+        border-radius: 5px;
+        opacity: 0;
+        transition: opacity 0.3s ease; /* Add transition effect for smoother appearance */
+        pointer-events: none; /* Prevent mouse events on the tooltip itself */
+      }
+      &:hover .tool_tip {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .rotate {
+        transform: rotate(180deg);
+      }
+
+      // STYLLING FOR THE DROPDOWN MENU
+      .dropdown {
+        position: absolute;
+        top: 100%; // Position the dropdown below the nav item
+        left: 30%; // Position the dropdown to the right of the nav item
+        min-width: 200px; // Adjust the width as needed
+        padding: 10px;
+        background-color: $storm-white; // Set background color
+        color: $storm-blue; // Set text color
+        border-radius: 5px; // Add border radius
+        box-shadow: 0 2px 5px rgba($storm-black, 0.1);
+        // display: none; // Hide the dropdown by default
+        z-index: 1; // Set the z-index to make sure the dropdown is on top of other elements
+
+        .link {
+          display: flex;
+          align-items: center;
+          padding: 10px 0 10px 5px;
+          text-decoration: none;
+          color: $storm-black;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: $storm-blue;
+            color: $storm-white;
+          }
+        }
+      }
+    }
+  }
+  .profile_content {
+    width: 100%;
+    left: 0;
+    bottom: 0;
+
+    .profile {
+      display: flex;
+
+      padding: 10px 5px;
+      height: 60px;
+      .profile_details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .name {
+          font-size: $storm-font-size-lg;
+          font-weight: $storm-font-weight-bolder;
+        }
+      }
+
+      .logout {
+        position: relative;
+        display: flex;
+        left: 60%;
+        font-size: $storm-font-size-xxl;
+        color: $storm-red;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transform: translate(-50%);
+      }
+    }
+  }
+
+  &.collapsed {
+    width: 30px;
+
+    .logo_content {
+      display: none;
+      // .logo {
+      //   .logo_name {
+      //     display: none;
+      //   }
+      // }
+    }
+
+    .menu_icon {
+      left: 50%;
+      transform: translate(-50%);
+    }
+
+    .nav_list {
+      .nav_item {
+        
+        .search {
+          display: none;
+        }
+
+        .link {
+          .icon {
+            margin-right: 0;
+          }
+          span {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .profile_content {
+      .profile {
+        .profile_details {
+          display: none;
+        }
+        .logout {
+          left: 50%;
+        }
+      }
+    }
+  }
+}

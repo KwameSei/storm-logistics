@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -8,6 +9,8 @@ import { BlueButton } from "../../../components/ButtonStyled";
 const ApprovePendingShipments = () => {
   const [shipments, setShipments] = useState([]);
 
+  const currentUser = useSelector(state => state.user.currentUser);
+  const token = localStorage.getItem("token");
   const URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
@@ -16,7 +19,11 @@ const ApprovePendingShipments = () => {
 
   const fetchPendingShipments = async () => {
     try {
-      const response = await axios.get(`${URL}/api/shipment/get-pending-shipments`);
+      const response = await axios.get(`${URL}/api/shipment/get-pending-shipments`, {
+        headers: {
+          'Authorization': `Bearer ${token}` || `Bearer ${currentUser.token || ''}`
+        },
+      });
       console.log("Pending Shipments:", response.data.data); // Log the pending shipments for debugging
 
       const PendingData = response.data.data.filter(shipment => shipment.status !== "Approved");

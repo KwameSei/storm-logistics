@@ -150,3 +150,59 @@ export const loginSuperAdmin = async (req, res) => {
     })
   }
 }
+
+// Get all super admins
+export const getAllSuperAdmins = async (req, res) => {
+  try {
+    const superAdmins = await SuperAdmin.find();
+
+    if (!superAdmins) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'No super admin found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'All super admins',
+      data: superAdmins
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
+// Get single super admin
+export const getSingleSuperAdmin = async (req, res) => {
+  try {
+    const superAdmin = await SuperAdmin.findById(req.params.id);
+
+    if (!superAdmin) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'Super admin not found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: 'Super admin found',
+      data: superAdmin
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}

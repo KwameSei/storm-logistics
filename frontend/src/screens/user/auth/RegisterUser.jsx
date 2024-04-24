@@ -171,7 +171,7 @@ const RegisterUser = ({ situation }) => {
         dispatch(authSuccess(user, userRole));
         setLoading(false);
         toast.success('User logged in successfully');
-        navigate('/user-dashboard');
+        navigate('/user-dashboard/dashboard');
       } else {
         navigate('/')
       }
