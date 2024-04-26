@@ -1,0 +1,15 @@
+@import '../../components/styles/variables.scss';
+
+.container {
+  width: 30%;
+  padding: 0;
+  .container_items {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    .country {
+      margin-right: 2rem;
+    }
+  }
+}

@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import {
   CheckOut,
+  GetAQuote,
   PaymentCallback,
   Homepage,
   AllServicesDisplay,
@@ -89,6 +90,7 @@ function App() {
               {/* <Route path="/checkout" element={<CheckOut />} /> */}
               <Route path="/checkout/:shipmentId" element={<CheckOut />} />
               <Route path="/payment-callback" element={<PaymentCallback />} />
+              <Route path="/get-a-quote" element={<GetAQuote />} />
               <Route path='/*' element={<Four04 />} />
             </>
           )}

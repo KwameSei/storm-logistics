@@ -33,6 +33,9 @@ export { default as Dashboard } from './superAdmin/dashboard/Dashboard';
 // ICUMS
 export { default as CreateIcums } from './icums/create/CreateIcums';
 
+// QUOTE
+export { default as GetAQuote } from './quote/GetAQuote';
+
 // DOCUMENTS
 export { default as Waybill } from './shipment/documents/Waybill';
 

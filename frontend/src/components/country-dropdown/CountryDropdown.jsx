@@ -3,6 +3,8 @@ import { Country, State, City } from 'country-state-city';
 import { Container, Grid, Typography, Select, MenuItem } from '@mui/material';
 import { toast } from 'react-toastify';
 
+import classes from './CountryDropdown.module.scss';
+
 const CountryDropdown = ({ onChange }) => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -73,24 +75,24 @@ const CountryDropdown = ({ onChange }) => {
   }, [selectedCountry, selectedState, onChange]);
 
   return (
-    <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={4}>
+    <div className={classes.container}>
+      <div className={classes.container_items}>
+        <div className={classes.country}>
           <Typography variant='subtitle1'>Country</Typography>
           <Select value={selectedCountry} onChange={(e) => handleCountryChange(e.target.value)}>
             {countries.map((country) => (
               <MenuItem key={country.isoCode} value={country.isoCode}>{country.name}</MenuItem>
             ))}
           </Select>
-        </Grid>
-        <Grid item xs={4}>
+        </div>
+        <div className={classes.city}>
           <Typography variant='subtitle1'>State</Typography>
           <Select value={selectedState} onChange={(e) => handleStateChange(e.target.value)}>
             {states.map((state) => (
               <MenuItem key={state.isoCode} value={state.isoCode}>{state.name}</MenuItem>
             ))}
           </Select>
-        </Grid>
+        </div>
         {/* <Grid item xs={4}>
           <Typography variant='subtitle1'>City</Typography>
           <Select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)}>
@@ -99,8 +101,8 @@ const CountryDropdown = ({ onChange }) => {
             ))}
           </Select>
         </Grid> */}
-      </Grid>
-    </Container>
+      </div>
+    </div>
   );
 };
 

@@ -22,7 +22,7 @@
   left: 0;
   width: 100%;
   height: 6rem;
-  z-index: 9999;
+  z-index: 1000;
   padding: 0 2rem;
   background-color: $storm-blue;
 
@@ -75,6 +75,7 @@
     .menus {
       display: flex;
       justify-content: center;
+      width: 100%;
       list-style: none;
       padding: 0;
       margin: 0 8rem;
@@ -84,25 +85,24 @@
       }
     }
 
+  &.show_menu .menus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    margin-left: 0;
+    // flex-direction: column;
+    .item {
+      margin-bottom: 1.5rem;
+    }
+  }
     // Styling hamburger menu
-
     .burger_menu {
       cursor: pointer;
       font-size: 5rem;
       display: none;
-    }
-    
-    &.show_menu {
-      display: block;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      flex-direction: column;
-
-      .item {
-        margin: 0;
-      }
     }
   }
 
@@ -118,3 +118,80 @@
     }
   }
 }
+
+@media screen and (max-width: 650px) {
+  .main_menus {
+    margin: 0;
+    padding: 0;
+    height: 4rem;
+    top: 0;
+    .menus_container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 650px;
+      max-width: 650px;
+      .menus {
+        display: none; /* Hide the menu items by default on small screens */
+        // position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: $storm-blue;
+      }
+
+      .burger_menu {
+        display: block;
+        color: $storm-white;
+        margin-right: 1rem;
+        // padding-bottom: 1.7rem;
+        font-size: $storm-font-size-xxl;
+      }
+
+      .logo_container {
+        margin-left: 1rem;
+
+        .img {
+          height: 50px;
+          width: 50px;
+        }
+      }
+    }
+
+    .nav_buttons {
+      display: none;
+    }
+
+    .contact_info {
+      display: none;
+      padding: 0;
+      .contacts {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 650px) and (max-width: 1024px) {
+  .main_menus {
+    padding: 0 4rem;
+    .menus_container {
+      .menus {
+        margin: 0 4rem;
+      }
+    }
+  }
+}
+
+// @media screen and (min-width: 1024px) {
+//   .main_menus {
+//     padding: 0 8rem;
+//     .menus_container {
+//       .menus {
+//         margin: 0 8rem;
+//       }
+//     }
+//   }
+// }

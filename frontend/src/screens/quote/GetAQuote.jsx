@@ -3,20 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Box, CircularProgress, Container, Typography, TextField, DialogActions, MenuItem, InputLabel, Select, FormControl } from '@mui/material';
-import { BlueButton } from '../../../components/ButtonStyled';
-import { CountryDropdown } from '../../../components';
-import { getShipmentSuccess } from '../../../state-management/shipmentState/shipmentSlice';
-import { setIcumses } from '../../../state-management/icums/icumsSlice';
-import { Waybill } from '../../../screens';
+import { BlueButton } from '../../components/ButtonStyled';
+import { CountryDropdown } from '../../components';
+import { getShipmentSuccess } from '../../state-management/shipmentState/shipmentSlice';
+import { setIcumses } from '../../state-management/icums/icumsSlice';
+import { Waybill } from '../../screens';
 
-import classes from './CreateShipment.module.scss';
-import { Label } from '@mui/icons-material';
-import { current } from '@reduxjs/toolkit';
+import classes from './getQuote.module.scss';
 
-const CreateShipment = () => {
+const GetAQuote = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -38,7 +35,7 @@ const CreateShipment = () => {
   const [weight, setWeight] = useState(0.1);
   const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
   const [distance, setDistance] = useState(0.1);
-  const [shippingCost, setShippingCost] = useState('');
+  const [shippingCost, setShippingCost] = useState(0);
   const vatRate = 17.5; // VAT rate is fixed at 17.5%
   const [totalCost, setTotalCost] = useState(0);
   const [type, setType] = useState('');
@@ -92,14 +89,10 @@ const CreateShipment = () => {
     success: true,
     message: '',
   });
-
-  const URL = import.meta.env.VITE_SERVER_URL;
-  const API_KEY = import.meta.env.VITE_COUNTRY_CITY_API_KEY;
-  const currentUser = useSelector((state) => state.user.currentUser);
-  const currentRole = useSelector((state) => state.user.currentUser.data.role);
   const token = useSelector((state) => state.user.token);
   const shipment = useSelector((state) => state.shipment.shipment);
   const icumses = useSelector((state) => state.icums.icumses);
+  const URL = import.meta.env.VITE_SERVER_URL;
   // console.log('ICUMS Data in Redux:', icumses);
 
   // Fetch the list of available HS codes from the ICUMS API
@@ -396,86 +389,7 @@ const CreateShipment = () => {
     }
   }, [shippingCost, dutyData.totalDutyCost]);
 
-  const createShipment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await axios.post(`${URL}/api/shipment/create-shipment`, 
-      {
-        ...fields,
-        userId: currentUser?.data?._id,
-        status: 'Pending',
-        approvedByAdmin: false,
-        senderMail: senderMail,
-        senderName: senderName,
-        senderPhone: senderPhone,
-        shippingCost: shippingCost,
-        vatRate: vatRate,
-        totalCost: totalCost,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      console.log('Response', response);
-
-      const shipmentData = response.data;
-      console.log('Shipment Data', shipmentData)
-
-      dispatch(getShipmentSuccess(shipmentData));
-      toast.success('Shipment successfully created')
-
-      setIsShipmentCreated(true);
-      console.log('Generated Waybill:', generatedWaybill);
-
-      navigate(`/${currentRole.toLowerCase()}-dashboard/shipment-creation-success`);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error creating shipment:', error);
-      toast.error(error?.data || 'Failed to create shipment');
-      setLoading(false);
-      setIsShipmentCreated(false)
-    }
-  };
   
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Validate form fields
-    // if (
-    //   !senderMail || 
-    //   !item || 
-    //   !recipientName || 
-    //   !recipientPhone || 
-    //   !departureDate || 
-    //   !origin.country || 
-    //   !origin.state || 
-    //   !origin.city || 
-    //   !destination.country || 
-    //   !destination.state || 
-    //   !destination.city || 
-    //   !currentLocation || 
-    //   !estimatedDelivery ||
-    //   !type ||
-    //   !weight ||
-    //   !senderName ||
-    //   !senderPhone ||
-    //   !recipientEmail ||
-    //   !dimensions ||
-    //   !distance ||
-    //   !shippingCost ||
-    //   !vatRate ||
-    //   !totalCost
-    //   ) {
-    //   return toast.error('All fields are required');
-    // }
-
-    createShipment(e);
-  };
-
   const handleOriginChange = (selectedOrigin) => {
     setOrigin(selectedOrigin);
   };
@@ -610,104 +524,8 @@ const CreateShipment = () => {
     <Container className={classes.shipment_container}>
       <div className={classes.container}>
         <div className={classes.shipment_form}>
-          <Typography variant='h4' className={classes.shipment_form_title}>Create Shipment</Typography>
-          <form onSubmit={handleSubmit}>
-            <Box className={classes.persons_info}>
-              <Box className={classes.persons_details}>
-                <Typography variant='h6' className={classes.persons_info_title}>Sender Details</Typography>
-                <TextField
-                  required
-                  id='senderName'
-                  label='Sender Name'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={senderName}
-                  onChange={(e) => setSenderName(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='senderMail'
-                  label='Sender Email'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={senderMail}
-                  onChange={(e) => setSenderMail(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='senderPhone'
-                  label='Sender Phone'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={senderPhone}
-                  onChange={(e) => setSenderPhone(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='senderAddress'
-                  label='Sender Address'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={senderAddress}
-                  onChange={(e) => setSenderAddress(e.target.value)}
-                  className={classes.text}
-                />
-              </Box>
-              <Box className={classes.persons_details}>
-                <Typography variant='h6' className={classes.persons_info_title}>Recipient Details</Typography>
-                <TextField
-                  required
-                  id='recipientName'
-                  label='Recipient Name'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='recipientEmail'
-                  label='Recipient Email'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='recipientPhone'
-                  label='Recipient Phone'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={recipientPhone}
-                  onChange={(e) => setRecipientPhone(e.target.value)}
-                  className={classes.text}
-                />
-                <TextField
-                  required
-                  id='recipientAddress'
-                  label='Recipient Address'
-                  variant='outlined'
-                  size='medium'
-                  margin='normal'
-                  value={recipientAddress}
-                  onChange={(e) => setRecipientAddress(e.target.value)}
-                  className={classes.text}
-                />
-              </Box>
-            </Box>
+          <Typography variant='h4' className={classes.shipment_form_title}>Get a Quote</Typography>
+          <form>
             <Box className={classes.item_info}>
               <TextField
                 required
@@ -855,7 +673,7 @@ const CreateShipment = () => {
                     <MenuItem value="">
                       <em>Select HS Code</em>
                     </MenuItem>
-                    {icumses.map((icums) => (
+                    {icumses && icumses.map((icums) => (
                       <MenuItem key={icums._id} value={icums.hs_code}>{icums.hs_code}</MenuItem>
                     ))}
                   </Select>
@@ -864,6 +682,7 @@ const CreateShipment = () => {
             </Box>
 
             <Box className={classes.dates}>
+
             <div className={classes.carrier_select}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel id="carrier-label">Carrier</InputLabel>
@@ -885,64 +704,6 @@ const CreateShipment = () => {
                 </Select>
               </FormControl>
             </div>
-
-            <div className={classes.date_item}>
-              <label htmlFor='pickup_date'>Pickup Date</label>
-              <TextField
-                required
-                type='date'
-                id='pickup_date'
-                // label='Pickup Date'
-                variant='outlined'
-                size='medium'
-                margin='normal'
-                value={pickup_date}
-                onChange={(e) => setPickup_date(e.target.value)}
-                className={classes.text}
-              />
-            </div>
-            <div className={classes.date_item}>
-              <label htmlFor='pickup_time'>Pickup Time</label>
-              <TextField
-                required
-                type='time'
-                id='pickup_time'
-                variant='outlined'
-                size='medium'
-                margin='normal'
-                value={pickup_time}
-                onChange={(e) => setPickup_time(e.target.value)}
-                className={classes.text}
-              />
-            </div>
-            <div className={classes.date_item}>
-              <label htmlFor='departureDate'>Departure Date: </label>
-              <TextField
-                required
-                type='date'
-                id='departureDate'
-                variant='outlined'
-                size='medium'
-                margin='normal'
-                value={departureDate}
-                onChange={(e) => setDepartureDate(e.target.value)}
-                className={classes.text}
-              />
-            </div>
-            <div className={classes.date_item}>
-              <label htmlFor='estimatedDelivery'>Estimated Delivery: </label>
-              <TextField
-                required
-                type='date'
-                id='estimatedDelivery'
-                variant='outlined'
-                size='medium'
-                margin='normal'
-                value={estimatedDelivery}
-                onChange={(e) => setEstimatedDelivery(e.target.value)}
-                className={classes.text}
-              />
-            </div>
           </Box>
 
             {/* Conditionally render a TextField when "Other" is selected */}
@@ -961,12 +722,12 @@ const CreateShipment = () => {
               />
             )}
 
-              <div className={classes.bottom_section}>
+            <div className={classes.bottom_section}>
               <div className={classes.left_items}>
             <Box marginBottom={2} className={classes.country_states}>
               <Typography variant="subtitle1" gutterBottom>Origin Country</Typography>
               <div className={classes.select_country_states}>
-              <CountryDropdown label="Origin" onChange={handleOriginChange} />
+              <CountryDropdown label="Origin" onChange={handleOriginChange} className={classes.dropdown} />
 
               <TextField
                 required
@@ -985,7 +746,7 @@ const CreateShipment = () => {
             <Box marginBottom={2} className={classes.country_states}>
               <Typography variant="subtitle1" gutterBottom>Destination Country</Typography>
               <div className={classes.select_country_states}>
-              <CountryDropdown label="Destination" onChange={handleDestinationChange} />
+              <CountryDropdown label="Destination" onChange={handleDestinationChange} className={classes.dropdown} />
 
               <TextField
                 required
@@ -1000,234 +761,28 @@ const CreateShipment = () => {
               />
               </div>
             </Box>
-            <Box marginBottom={2} className={classes.country_states}>
-              <Typography variant="subtitle1" gutterBottom>Current Location</Typography>
-              <div className={classes.select_country_states}>
-              <CountryDropdown label="Current Location" onChange={handleCurrentLocationChange} />
-
-              <TextField
-                required
-                id='currentLocationCity'
-                label='Current Location City'
-                variant='outlined'
-                fullWidth
-                margin='normal'
-                value={currentCity}
-                onChange={handleCurrentLocationCityChange}
-                className={classes.text}
-              />
-              </div>
-            </Box>
             </div>
-            {/* <TextField
-              required
-              id='userId'
-              label='User ID'
-              variant='outlined'
-              size='medium'
-              margin='normal'
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            /> */}
-            {/* <div className={classes.estimated_delivery}>
-              <label htmlFor='estimatedDelivery'>Estimated Delivery: </label>
-              <TextField
-                required
-                type='date'
-                id='estimatedDelivery'
-                variant='outlined'
-                size='medium'
-                margin='normal'
-                value={estimatedDelivery}
-                onChange={(e) => setEstimatedDelivery(e.target.value)}
-              />
-            </div> */}
-
-            {/* <h2>Tax Calculator</h2>
-            <TextField
-              required
-              id='currency'
-              label='Currency'
-              variant='outlined'
-              size='medium'
-              margin='normal'
-              value={currency}
-              onChange={handleCurrencyChange}
-            />
-            <div>
-              <Typography variant="h6" gutterBottom>Item Information</Typography>
-              {itemInfo.map((item, index) => (
-                <div key={index}>
-                  <TextField
-                    required
-                    id='quantity'
-                    label='Quantity'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.quantity}
-                    onChange={(e) => handleItemInfoChange('quantity', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='weight'
-                    label='Weight'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.weight}
-                    onChange={(e) => handleItemInfoChange('weight', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='hs_code'
-                    label='HS Code'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.hs_code}
-                    onChange={(e) => handleItemInfoChange('hs_code', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='cpc'
-                    label='CPC'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.cpc}
-                    onChange={(e) => handleItemInfoChange('cpc', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='origin'
-                    label='Origin'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.origin}
-                    onChange={(e) => handleItemInfoChange('origin', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='cifValue'
-                    label='CIF Value'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.cifValue}
-                    onChange={(e) => handleItemInfoChange('cifValue', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='fob'
-                    label='FOB'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.fob}
-                    onChange={(e) => handleItemInfoChange('fob', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='pkgUnit'
-                    label='Package Unit'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.pkgUnit}
-                    onChange={(e) => handleItemInfoChange('pkgUnit', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='suppUnit1'
-                    label='Supplementary Unit 1'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={item.suppUnit1}
-                    onChange={(e) => handleItemInfoChange('suppUnit1', e.target.value, index)}
-                  />
-                </div>
-              ))}
-              <button onClick={() => setItemInfo([...itemInfo, { quantity: '', weight: '', hs_code: '', cpc: '', origin: '', cifValue: '', fob: '', pkgUnit: '', suppUnit1: '' }])}>Add Item</button>
-            </div>
-            <div>
-              <Typography variant="h6" gutterBottom>User Defined Tax</Typography>
-              {userDefinedTax.map((tax, index) => (
-                <div key={index}>
-                  <TextField
-                    required
-                    id='quantity'
-                    label='Quantity'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={tax.quantity}
-                    onChange={(e) => handleUseDefinedTaxChange('quantity', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='taxType'
-                    label='Tax Type'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={tax.taxType}
-                    onChange={(e) => handleUseDefinedTaxChange('taxType', e.target.value, index)}
-                  />
-                  <TextField
-                    required
-                    id='taxRate'
-                    label='Tax Rate'
-                    variant='outlined'
-                    size='medium'
-                    margin='normal'
-                    value={tax.taxRate}
-                    onChange={(e) => handleUseDefinedTaxChange('taxRate', e.target.value, index)}
-                  />
-                </div>
-              ))}
-              <button onClick={() => setUserDefinedTax([...userDefinedTax, { quantity: '', taxType: '', taxRate: '' }])}>Add Tax</button>
-            </div>
-            <button onClick={calculateTax}>Calculate Tax</button>
-            {calculatedTax && (
-              <div>
-                <Typography>Total CIF Value: {calculatedTax.totalCifValue}</Typography>
-                <Typography>Total FOB Value: {calculatedTax.totalFobValue}</Typography>
-                <Typography>Total Tax: {calculatedTax.totalTax}</Typography>
-              </div>
-            )} */}
             <div className={classes.right_items}>
             {/* Display calculated duties */}
             <div className={classes.sub_charges}>
-            <div>
               <p>Import Duty Rate: {dutyData.importDuty}</p>
               <p>Import Duty VAT: {dutyData.vat}</p>
               <p>NHIL: {dutyData.nhil}</p>
               <p>Other Charges: {dutyData.otherDutiesAndCharges}</p>
               <p>Total Charges: {dutyData.totalDutyCost}</p>
+              <p>Shipping Cost: {shippingCost}</p>
             </div>
-
-            <p>Shipping Cost: {shippingCost}</p>
-            </div>
+            {/* <Typography>VAT Rate: {vatRate}</Typography> */}
             <div className={classes.total_charge}>
-            <p>Total Cost: {totalCost}</p>
+              <p>Total Cost: {totalCost}</p>
             </div>
-            <BlueButton type='submit' disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : 'Create Shipment'}
-            </BlueButton>
             </div>
             </div>
           </form>
-          {/* Render the Waybill component only if shipment creation is successful and shipment data is available */}
-          {isShipmentCreated && shipment && (
-            <Waybill shipment={shipment} />
-          )}
         </div>
       </div>
     </Container>
   );
 };
 
-export default CreateShipment;
+export default GetAQuote;

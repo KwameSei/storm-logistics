@@ -12,7 +12,10 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
+    console.log("showMenu:", showMenu);
   };
+
+  console.log("Rendering Navbar. showMenu:", showMenu);
 
   return (
     <div className={classes.main_menus}>
@@ -24,12 +27,12 @@ const Navbar = () => {
         </div>
         
       </div>
-      <nav className={classes.menus_container}>
+      <nav className={`${classes.menus_container} ${showMenu ? classes.show_menu : ''}`}>
         <div className={classes.logo_container}>
           <img src={Logo} alt='Logo' className={classes.img} />
         </div>
 
-        <ul className={`${classes.menus} ${showMenu ? classes.active : ''}`}>
+        <ul className={classes.menus}>
           {Items.map((item, index) => (
             <li key={index} className={classes.item}>
               <SubItems items={item} />
@@ -37,7 +40,7 @@ const Navbar = () => {
           ))}
         </ul>
         <div className={classes.burger_menu} onClick={toggleMenu}>
-          <Menu />
+          <Menu className={classes.menu_icon} />
         </div>
       </nav>
       <div className={classes.nav_buttons}>

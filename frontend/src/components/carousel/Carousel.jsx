@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BlueButton, RedButton } from '../ButtonStyled';
 
 import classes from './Carousel.module.scss';
+import { Link } from 'react-router-dom';
 
 const Carousel = ({ images, interval = 5000 }) => {
   const [index, setIndex] = useState(0);
@@ -50,7 +51,9 @@ const Carousel = ({ images, interval = 5000 }) => {
               <p className={classes.overlay_des}>{images[index].description}</p>
               <div className={classes.buttons}>
                 <BlueButton className={classes.overlay_button}>{images[index].button}</BlueButton>
+                <Link to='/get-a-quote'>
                 <RedButton className={classes.overlay_button2}>{images[index].button2}</RedButton>
+                </Link>
               </div>
 
               <div className={classes.controls}>
