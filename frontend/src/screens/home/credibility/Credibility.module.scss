@@ -91,3 +91,156 @@
     }
   }
 }
+
+// Making the component responsive
+@media screen and (max-width: 499px) {
+  .credibility {
+
+    .credibility_main {
+
+      .credibility_content {
+        height: 400px;
+
+        .content_overlay {
+
+          .content_sub1 {
+
+            .heading {
+              font-size: $storm-font-size-lg;
+              text-align: center;
+            }
+
+            .sub_heading {
+              font-size: $storm-font-size-md;
+              width: 85%;
+            }
+          }
+
+          .content_sub2 {
+            flex-direction: column;
+
+            .text {
+              font-size: $storm-font-size-lg;
+
+              span {
+                font-size: $storm-font-size-xl;
+              }
+            }
+          }
+        }
+      }
+
+      .credibility_content2 {
+        height: 30rem;
+      }
+    }
+  }
+
+}
+
+@media screen and (max-width: 768px) {
+  .credibility {
+
+    .credibility_main {
+
+      .credibility_content {
+        height: 550px;
+
+        .content_overlay {
+
+          .content_sub1 {
+
+            .heading {
+              text-align: center;
+              padding: 5px;
+              font-size: $storm-font-size-xl;
+            }
+
+            .sub_heading {
+              font-size: $storm-font-size-lg;
+              width: 70%;
+            }
+          }
+
+          .content_sub2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            .text {
+              height: 100px;
+              text-align: center;
+              font-size: $storm-font-size-lg;
+
+              span {
+                font-size: $storm-font-size-xl;
+              }
+            }
+          }
+        }
+      }
+
+      .credibility_content2 {
+        flex-direction: column;
+        height: 15rem;
+        padding: 5px;
+        .section1 {
+          margin: 10px 0;
+          padding: 0 5px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1199px) {
+  .credibility {
+
+    .credibility_main {
+
+      .credibility_content {
+        height: 550px;
+
+        .content_overlay {
+
+          .content_sub1 {
+
+            .heading {
+              text-align: center;
+              padding: 5px;
+              font-size: $storm-font-size-xxl;
+            }
+
+            .sub_heading {
+              font-size: $storm-font-size-xl;
+              width: 70%;
+            }
+          }
+
+          .content_sub2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            .text {
+              height: 100px;
+              text-align: center;
+              font-size: $storm-font-size-lg;
+
+              span {
+                font-size: $storm-font-size-xl;
+              }
+            }
+          }
+        }
+      }
+
+      .credibility_content2 {
+        display: flex;
+        height: 10rem;
+        // padding: 15px;
+        .section1 {
+          margin: 0 20px;
+          padding: 0 5px;
+        }
+      }
+    }
+  }
+  
+}

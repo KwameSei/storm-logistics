@@ -1,3 +1,4 @@
+@import '../styles/variables.scss';
 .carousel_head {
     position: relative;
     overflow-x: hidden;
@@ -31,7 +32,7 @@
                 bottom: 0;
                 width: 100%;
                 height: 35%;
-                color: white;
+                color: $storm-white;
                 background-color: rgba(0, 0, 0, 0.5);
 
                 .overlay_title, .overlay_des, .controls {
@@ -60,8 +61,8 @@
                     border-radius: 50%;
                     font-size: 1.5rem;
                     padding-bottom: 2.5px;
-                    color: red;
-                    background-color: #fff;
+                    color: $storm-red;
+                    background-color: $storm-white;
                   }
 
                   .control_prev {
@@ -79,16 +80,183 @@
                     width: 10rem;
                     height: 3rem;
                     font-weight: 1.5rem;
-                    color: #fff;
+                    color: $storm-white;
                   }
 
                   .overlay_button {
-                    background-color: #002d75;
+                    background-color: $storm-blue;
                   }
 
                   .overlay_button2 {
-                    background-color: #e33000;
+                    background-color: $storm-red;
                   }
+                }
+            }
+        }
+    }
+}
+
+// Making the carousel responsive
+@media screen and (max-width: 768px) {
+    .carousel_head {
+        top: 6rem;
+        margin-bottom: 5rem;
+
+        .carousel {
+            .imageContainer {
+                height: 500px;
+
+                .overlay {
+                    .overlay_title {
+                        font-size: 1.5rem;
+                    }
+
+                    .overlay_des {
+                        font-size: 1rem;
+                    }
+
+                    .controls {
+                        .control_prev, .control_next {
+                            width: 20px;
+                            height: 20px;
+                            margin-top: 15px;
+                            font-size: 1rem;
+                        }
+                    }
+
+                    .buttons {
+                        .overlay_button, .overlay_button2 {
+                            width: 8rem;
+                            height: 2.5rem;
+                            font-weight: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Making the carousel responsive
+@media screen and (min-width: 499px) and (max-width: 767px) {
+    .carousel_head {
+      top: 4rem;
+      margin-bottom: 5rem;
+      .carousel {
+        .imageContainer {
+          height: 400px;
+            .overlay {
+              height: 45%;
+                .overlay_title {
+                  margin-top: 0;
+                  margin-bottom: 0;
+                  font-size: 1.5rem;
+                }
+              .overlay_des {
+                margin-top: 5px;
+                padding: 0 3px;
+                font-size: 1.2rem;
+              }
+              .controls {
+                .control_prev, .control_next {
+                  width: 25px;
+                  height: 25px;
+                  margin-top: 10px;
+                  font-size: 1rem;
+                }
+              }
+              .buttons {
+                .overlay_button, .overlay_button2 {
+                  width: 8rem;
+                  height: 2rem;
+                  padding-top: 5px;
+                  font-weight: 0.8rem;
+                }
+              }
+            }
+          }
+        }
+    }
+}
+
+// Making the carousel responsive
+@media screen and (max-width: 499px) {
+    .carousel_head {
+        top: 3rem;
+        margin-bottom: 4rem;
+
+        .carousel {
+            .imageContainer {
+                height: 400px;
+                .overlay {
+                  height: 45%;
+                    .overlay_title {
+                      margin-top: 0;
+                      margin-bottom: 0;
+                      font-size: 1.5rem;
+                    }
+                    .overlay_des {
+                      font-size: 1rem;
+                    }
+
+                    .controls {
+                        .control_prev, .control_next {
+                            width: 25px;
+                            height: 20px;
+                            margin-top: 5px;
+                            padding-top: 3px;
+                            font-size: 0.8rem;
+                        }
+                    }
+
+                    .buttons {
+                        .overlay_button, .overlay_button2 {
+                            width: 8rem;
+                            height: 2rem;
+                            font-weight: 0.2rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Making the carousel responsive
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .carousel_head {
+        top: 7rem;
+        margin-bottom: 7rem;
+
+        .carousel {
+            .imageContainer {
+                height: 600px;
+
+                .overlay {
+                    .overlay_title {
+                        font-size: 1.8rem;
+                    }
+
+                    .overlay_des {
+                        font-size: 1.2rem;
+                    }
+
+                    .controls {
+                        .control_prev, .control_next {
+                            width: 25px;
+                            height: 25px;
+                            margin-top: 20px;
+                            font-size: 1.2rem;
+                        }
+                    }
+
+                    .buttons {
+                        .overlay_button, .overlay_button2 {
+                            width: 9rem;
+                            height: 3rem;
+                            font-weight: 1.2rem;
+                        }
+                    }
                 }
             }
         }

@@ -1,15 +1,30 @@
 @import '../../styles/variables.scss';
 // STYLING SUB ITEMS
 .sub_container {
-
+  position: relative;
+  // margin-top: 8rem;
   .sub_items {
-    list-style: none;
-    text-decoration: none;
-
-    .buttons {
-      text-decoration: none;
+    position: relative;
+    display: inline-block;
+    .title_dropdown {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      .title {
+        text-decoration: none;
+        color: $storm-white;
+        padding: 0;
+        margin: 0;
+      }
+      .arrow_icon {
+        font-size: $storm-font-size-xl;
+        color: $storm-white;
+      }
+      .rotate {
+        transform: rotate(180deg);
+      }
     }
-
     .sub_items_btn {
       text-decoration: none;
       color: $storm-white;
@@ -18,6 +33,51 @@
 
       &:hover {
         color: $storm-gold;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// STYLING DROPDOWN
+.dropdown_container {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: $storm-gold;
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    padding: 8px 0;
+    background-color: $storm-gold;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+
+  .dropdown.active {
+    display: block;
+    // padding-left: 10px;
+    // padding-right: 5rem;
+  }
+
+  .sub_items {
+    list-style: none;
+
+    .link {
+      display: block;
+      padding: 10px;
+      color: $storm-white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        color: $storm-blue;
         text-decoration: underline;
       }
     }
