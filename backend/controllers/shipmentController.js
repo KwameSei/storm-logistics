@@ -12,7 +12,7 @@ import notifyAdminAboutShipment from "../utils/notifyAdminAboutShipment.js";
 // import { calculateImportDuty } from "./icumsController.js";
 // import { calculateShipmentCost } from "../utils/calculateShipmentCost.js";
 import Icums from "../models/icumsSchema.js";
-import { format } from "morgan";
+// import { format } from "morgan";
 // import { initiatePayment } from "./paymentController.js";
 
 // Calculate shipping cost
