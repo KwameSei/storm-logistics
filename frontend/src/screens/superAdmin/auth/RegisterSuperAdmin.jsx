@@ -174,7 +174,7 @@ const RegisterSuperAdmin = ({ situation }) => {
         dispatch(authSuccess(admin, adminRole));
         setLoading(false);
         toast.success('Super admin logged in successfully');
-        navigate('/superadmin-dashboard');
+        navigate('/superadmin-dashboard/dashboard');
       } else {
         navigate('/')
       }
