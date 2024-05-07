@@ -92,7 +92,7 @@ const Navbar = () => {
               </div>
             )}
           {/* </Link> */}
-          <ProfileModal show={showProfileModal} onHide={toggleProfileModal} profile={currentUser.data} className={classes.modal} />
+          <ProfileModal show={!showProfileModal} onHide={toggleProfileModal} profile={currentUser.data} className={classes.modal} />
           </div>
           </>
         ) : null}

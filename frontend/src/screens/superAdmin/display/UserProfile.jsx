@@ -6,7 +6,6 @@
   import { getError, getUser } from "../../../state-management/userState/userSlice";
 
   import classes from './display.module.scss';
-  import { ClassNames } from "@emotion/react";
 
   const UserProfile = () => {
     const { id } = useParams();
