@@ -15,6 +15,17 @@ const superadminSchema = mongoose.Schema({
   },
   phone: {
     type: String,
+  },city: {
+    type: String
+  },
+  state: {
+    type: String
+  },
+  country: {
+    type: String
+  },
+  transactions: {
+    type: String
   },
   image: {
     url: String,

@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import CountUp from 'react-countup';
-import { Container, Grid, Typography, Box, Paper } from '@mui/material';
+import { Container, Grid, Typography, Box, Paper, FormControl, MenuItem, InputLabel, Select } from '@mui/material';
 import { setPayments } from '../../../state-management/payment/paymentSlice';
 import { getShipments } from '../../../state-management/shipmentState/shipmentSlice';
 import { getUsers } from '../../../state-management/userState/userSlice';
 import BankNotes from '../../../assets/images/bank-notes.png';
+import { OverviewChart } from '../../../components';
 import UsersIcon from '../../../assets/images/users-icon.png';
 import SuperAdmin from '../../../assets/images/super-admin-icon.png';
 import ApprovedShipment from '../../../assets/images/approved-shipment-icon.png';
@@ -23,8 +24,10 @@ import classes from './dashboard.module.scss';
 const Dashboard = () => {
   // const classes = useStyles();
   const dispatch = useDispatch();
+  const [view, setView] = useState('shipments');
   const payments = useSelector((state) => state.payment.payments);
   const shipments = useSelector((state) => state.shipment.shipments);
+  console.log('Shipments: ', shipments);
   const users = useSelector((state) => state.user.users);
   const token = useSelector((state) => state.user.token);
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -46,20 +49,20 @@ const Dashboard = () => {
     }
   };
 
-  const fetchShipments = async () => {
-    try {
-      const response = await axios.get(`${URL}/api/shipment/get-all-shipments`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const shipmentData = response.data;
-      if (shipmentData) {
-        dispatch(getShipments(shipmentData));
-      }
-    } catch (error) {
-      console.error('Error fetching shipments: ', error);
-      toast.error(error.message);
-    }
-  };
+  // const fetchShipments = async () => {
+  //   try {
+  //     const response = await axios.get(`${URL}/api/shipment/get-all-shipments`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const shipmentData = response.data.data;
+  //     if (shipmentData) {
+  //       dispatch(getShipments(shipmentData));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching shipments: ', error);
+  //     toast.error(error.message);
+  //   }
+  // };
 
   const fetchAllUsers = async () => {
     try {
@@ -99,21 +102,21 @@ const Dashboard = () => {
   useEffect(() => {
     if (currentUser) {
       fetchPayments();
-      fetchShipments();
+      // fetchShipments();
       fetchAllUsers();
       fetchAllSuperAdmins();
     }
   }, [currentUser]);
 
   const paymentData = payments.data || [];
-  const shipmentData = shipments.data || [];
+  const shipmentData = shipments?.data || [];
   const totalAmount = Array.isArray(paymentData) ? paymentData.reduce((acc, payment) => acc + payment.amount, 0) : 0;
   const paymentCount = paymentData.length;
   const pendingPayments = paymentData.filter((payment) => payment.status === 'pending').length;
   const successfulPayments = paymentData.filter((payment) => payment.status === 'success').length;
-  const shipmentCount = shipments.length;
-  const approvedShipments = shipments.filter((shipment) => shipment.approvedByAdmin === true).length;
-  const pendingShipments = shipments.filter((shipment) => shipment.approvedByAdmin === false).length;
+  const shipmentCount = shipmentData.length;
+  const approvedShipments = shipmentData.filter((shipment) => shipment.approvedByAdmin === true).length;
+  const pendingShipments = shipmentData.filter((shipment) => shipment.approvedByAdmin === false).length;
   console.log('pendingShipments: ', pendingShipments);
   const userCount = users.length;
   const superAdminCount = users.filter((user) => user.role === 'SuperAdmin').length;
@@ -121,6 +124,23 @@ const Dashboard = () => {
   return (
     <div className={classes.dashboard}>
       <Container className={classes.container}>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="view">View</InputLabel>
+          <Select
+            labelId="view"
+            id="view"
+            value={view}
+            label="View"
+            onChange={(e) => setView(e.target.value)}
+          >
+            <MenuItem value="shipments">Shipments</MenuItem>
+            <MenuItem value="payments">Payments</MenuItem>
+            <MenuItem value="users">Users</MenuItem>
+          </Select>
+        </FormControl>
+        {view === 'shipments' && <OverviewChart isDashboard view={view} shipments={shipments} />}
+        {view === 'payments' && <OverviewChart isDashboard view={view} payments={payments} />}
+        {view === 'users' && <OverviewChart isDashboard view={view} users={users} />}
         <Box sx={{ flexGrow: 1 }} className={classes.main_box}>
           <Typography variant="h3" className={classes.username}>Welcome to your Dashboard, <span>{username}</span></Typography>
         <Grid container spacing={3} className={classes.main_grid}>

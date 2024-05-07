@@ -162,69 +162,43 @@ const GetAllPayments = () => {
 
   const PaymentButtonHaver = ({ row }) => {
     const options = ['All', 'Pending', 'Approved', 'Declined'];
-
+  
     const [open, setOpen] = useState(false);
     const anchorRef = useRef(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
-
-    const handleClick = () => {
-      console.info(`You clicked ${options[selectedIndex]}`);
-
-      if (selectedIndex === 0) {
+  
+    const handleClick = (index) => {
+      console.info(`You clicked ${options[index]}`);
+      setSelectedIndex(index);
+  
+      if (index === 0) {
         handleAllPayments();
-      } else if (selectedIndex === 1) {
+      } else if (index === 1) {
         handlePendingPayments();
-      } else if (selectedIndex === 2) {
+      } else if (index === 2) {
         handleApprovedPayments();
-      } else if (selectedIndex === 3) {
+      } else if (index === 3) {
         handleDeclinedPayments();
       }
     };
-
+  
     return (
       <div className={classes.get_payments}>
         <ButtonGroup variant='contained' ref={anchorRef} aria-label='split button'>
-          <BlueButton onClick={handleClick}>{options[selectedIndex]}</BlueButton>
-          <BlueButton
-            size='small'
-            aria-controls={open ? 'split-button-menu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-label='select merge strategy'
-            aria-haspopup='menu'
-            onClick={() => {
-              setOpen((prevOpen) => !prevOpen);
-            }}
-          >
-            {open ? <ArrowDropUpOutlined /> : <ArrowDropDownRounded />}
-          </BlueButton>
-        </ButtonGroup>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+          {options.map((option, index) => (
+            <BlueButton
+              key={option}
+              onClick={() => handleClick(index)}
+              size='small'
+              variant={index === selectedIndex ? 'contained' : 'outlined'}
             >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList id='split-button-menu'>
-                    {options.map((option, index) => (
-                      <MenuItem
-                        key={option}
-                        selected={index === selectedIndex}
-                        onClick={(event) => handleMenuItemClick(event, index)}
-                      >
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+              {option}
+            </BlueButton>
+          ))}
+        </ButtonGroup>
       </div>
     );
-  }
+  };  
 
   return (
     <>

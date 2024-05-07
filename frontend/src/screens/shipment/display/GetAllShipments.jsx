@@ -28,6 +28,7 @@ const GetAllShipments = () => {
   const [loading, setLoading] = useState(false);
 
   const shipments = useSelector((state) => state.shipment.shipments);
+  console.log("Shipments data: ", shipments);
   const shipmentError = useSelector((state) => state.shipment.error);
   const token = useSelector((state) => state.user.token);
   const currentUser = useSelector(state => state.user.currentUser);
@@ -112,7 +113,10 @@ const GetAllShipments = () => {
     },
   ];
 
-  const shipmentRows = shipments?.map((shipment) => ({
+  const shipmentData = shipments?.data || [];
+  console.log("Shipment data 2: ", shipmentData);
+
+  const shipmentRows = shipmentData.map((shipment) => ({
     id: shipment._id,
     trackingNumber: shipment.trackingNumber,
     senderName: shipment.senderName,

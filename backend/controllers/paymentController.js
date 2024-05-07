@@ -24,9 +24,11 @@ const initiatePayment = async (shipmentId) => {
 
     // Generate a unique reference for the payment transaction
     const reference = generateUniqueReference();
+    
+    const amountInKobo = Math.round(shipment.totalCost * 100); // Convert totalCost from GHS to kobo
 
     const params = JSON.stringify({
-      amount: shipment.totalCost * 100,  // Convert totalCost from GHS to kobo
+      amount: amountInKobo,
       email: shipment.senderMail,
       reference: reference, // Provide the generated reference for the payment
       callback_url: `${process.env.CLIENT_URL}/payment-callback`,
@@ -54,6 +56,7 @@ const initiatePayment = async (shipmentId) => {
         response.on("end", () => {
           try {
             const parsedData = JSON.parse(data);
+            console.log("Parsed data from Paystack API:", parsedData);
             if (!parsedData.data || !parsedData.data.authorization_url) {
               console.error("Invalid response from Paystack API:", parsedData);
               reject("Invalid response from Paystack API");
@@ -279,7 +282,39 @@ export const createPaymentLink = async (req, res) => {
 // Function to get all payments
 export const getPayments = async (req, res) => {
   try {
-    const payments = await Payment.find();
+    const { page = 1, pageSize = 20, sort = null, search = '' } = req.query;
+
+    // Formatted sort object
+    const generateSort = () => {
+      const sortParsed = JSON.parse(sort);
+      const sortFormatted = {
+        [sortParsed.field]: sortParsed.sort === 'asc' ? 1 : -1
+      };
+
+      return sortFormatted;
+      };
+      
+    const sortResult = Boolean(sort) ? generateSort() : {};
+
+    // Validate if search is a valid date
+    const isValidDate = (dateString) => {
+      const date = new Date(dateString);
+      return date instanceof Date && !isNaN(date);
+    };
+
+    const payments = await Payment.find({
+      $or: [
+        { amount: parseInt(search) || 0 },  // Search amount, transactionId, status, and paymentDate fields
+        { transactionId: { $regex: search, $options: 'i' } },
+        { status: { $regex: search, $options: 'i' } },
+        // Validate if search is a valid date before using it in the query
+    isValidDate(search) ? { paymentDate: { $gte: new Date(search), $lte: new Date(new Date(search).getTime() + 86400000) } } : {}
+      ]
+    })
+    .sort(sortResult)
+    .skip((parseInt(page) - 1) * parseInt(pageSize))
+    .limit(parseInt(pageSize))
+    .exec();
 
     if (!payments) {
       return res.status(404).json({
@@ -289,11 +324,17 @@ export const getPayments = async (req, res) => {
       })
     }
 
+    // Get total count of payments
+    const totalPayments = await Payment.countDocuments({
+      name: { $regex: search, $options: 'i' }
+    });
+
     return res.status(200).json({
       success: true,
       status: 200,
       message: "Payments retrieved successfully",
-      data: payments
+      data: payments,
+      totalPayments
     });
   } catch (error) {
     console.error("Error getting payments:", error);

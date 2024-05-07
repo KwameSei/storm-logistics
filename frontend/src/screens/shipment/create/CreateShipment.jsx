@@ -13,8 +13,6 @@ import { setIcumses } from '../../../state-management/icums/icumsSlice';
 import { Waybill } from '../../../screens';
 
 import classes from './CreateShipment.module.scss';
-import { Label } from '@mui/icons-material';
-import { current } from '@reduxjs/toolkit';
 
 const CreateShipment = () => {
   const dispatch = useDispatch();

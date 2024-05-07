@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { CircularProgress, DialogActions, DialogContent, DialogContentText, IconButton, Input, InputAdornment, TextField } from "@mui/material";
 import { BlueButton } from "../../../components/ButtonStyled";
+import { CountryDropdown } from "../../../components";
 import { authSuccess, underControl } from "../../../state-management/userState/userSlice";
 
 import classes from '../../../components/styles/auth.module.scss';
@@ -25,10 +26,12 @@ const RegisterUser = ({ situation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [country, setCountry] = useState({country: '', state: ''});
   const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [countryError, setCountryError] = useState(false);
   // const [address, setAddress] = useState('');
   // const [phone, setPhone] = useState('');
 
@@ -52,6 +55,7 @@ const RegisterUser = ({ situation }) => {
     username,
     email,
     password,
+    country,
     confirmPassword,
     role
   }
@@ -203,6 +207,10 @@ const RegisterUser = ({ situation }) => {
     }
   }, [ status, dispatch, navigate, error ]);
 
+  const handleCountryChange = (selectedCountry) => {
+    setCountry(selectedCountry);
+  }
+
   return (
     <div className={classes.register_user}>
       <form className={classes.form} onSubmit={handleSubmit}>
@@ -282,6 +290,17 @@ const RegisterUser = ({ situation }) => {
             variant="outlined"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+          />
+          <CountryDropdown
+            error={countryError}
+            helperText={countryError && 'Country is required'}
+            required
+            className={classes.form_input}
+            id="country"
+            label="Country"
+            variant="outlined"
+            value={country}
+            onChange={handleCountryChange}
           />
           </>
         )}

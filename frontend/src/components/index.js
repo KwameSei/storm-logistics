@@ -16,3 +16,9 @@ export { default as Footer } from './footer/Footer';
 // Custom table
 export { default as CustomTable } from './table/CustomTable';
 export { default as WaybillTable } from './table/WaybillTable';
+
+// Geo data
+export { default as GeoData } from './data/GeoData';
+
+// Charts
+export { default as OverviewChart } from './charts/OverviewChart';

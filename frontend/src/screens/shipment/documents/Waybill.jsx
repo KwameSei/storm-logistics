@@ -9,7 +9,6 @@ import Logo from '../../../assets/storm-logo.jpg';
 import { getShipmentFailure, getShipment } from '../../../state-management/shipmentState/shipmentSlice';
 import classes from './documents.module.scss';
 import { BlueButton } from '../../../components/ButtonStyled';
-import { ClassNames } from '@emotion/react';
 
 const Waybill = () => {
   const componentRef = useRef();
@@ -174,6 +173,9 @@ const Waybill = () => {
       />
       <div ref={componentRef}>
       <div className={classes.waybill_container}>
+        {/* <img src={Logo} alt='watermark' className={classes.watermark_image} /> */}
+      <div className={classes.watermark}>
+          {/* <img src={Logo} alt="logo" /> */}
       <div className={classes.waybill_section1}>
         <div className={classes.waybill_logo}>
           <img src={Logo} alt="logo" />
@@ -241,12 +243,12 @@ const Waybill = () => {
         <p className={classes.hs_code}>HS Code: <br /> {hs_code.hs_code}</p>
         <p className={classes.description}>Description: <br /> {hs_code.description}</p>
       </div>
-      <div className={ClassNames.watermark}>
-        {/* <img src={Logo} alt="logo" /> */}
         </div>
       </div>
 
       <div className={classes.waybill_container}>
+      <div className={classes.watermark}>
+          {/* <img src={Logo} alt="logo" /> */}
       <div className={classes.waybill_section1}>
         <div className={classes.waybill_logo}>
           <img src={Logo} alt="logo" />
@@ -314,9 +316,12 @@ const Waybill = () => {
         <p className={classes.hs_code}>HS Code: <br /> {hs_code.hs_code}</p>
         <p className={classes.description}>Description: <br /> {hs_code.description}</p>
       </div>
+        </div>
       </div>
 
       <div className={classes.waybill_container}>
+      <div className={classes.watermark}>
+          {/* <img src={Logo} alt="logo" /> */}
       <div className={classes.waybill_section1}>
         <div className={classes.waybill_logo}>
           <img src={Logo} alt="logo" />
@@ -384,6 +389,7 @@ const Waybill = () => {
         <p className={classes.hs_code}>HS Code: <br /> {hs_code.hs_code}</p>
         <p className={classes.description}>Description: <br /> {hs_code.description}</p>
       </div>
+        </div>
       </div>
     </div>
     </div>

@@ -1,0 +1,13 @@
+@import '../../../components/styles/variables.scss';
+
+.geography_container {
+  margin-top: 11rem;
+  margin-bottom: 5rem;
+
+  .geography_main {
+    width: 95%;
+    height: 150vh;
+    margin: 0 auto;
+    border: 2px solid $storm-white;
+  }
+}

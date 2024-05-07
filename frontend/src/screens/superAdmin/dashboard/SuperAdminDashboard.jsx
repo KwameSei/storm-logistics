@@ -9,12 +9,14 @@ import {
   GetAllUsers,
   GetAllShipments,
   GetSingleUser,
+  UserGeography,
   PaymentSuccess,
   RegisterSuperAdmin, 
   RegisterUser, 
   ShipmentCreationSuccess, 
   TrackShipment,
   UpdateShipmentLocation,
+  UserProfile,
   Waybill
 } from '../../../screens';
 
@@ -39,6 +41,8 @@ const SuperAdminDashboard = () => {
           <Route path="/waybill/:id" element={<Waybill />} />
           <Route path="/register-user" element={<RegisterUser />} />
           <Route path="/get-all-users" element={<GetAllUsers />} />
+          <Route path="/get-user/:id" element={<UserProfile />} />
+          <Route path="/user-geography" element={<UserGeography />} />
           <Route path="/get-single-user/:userId" element={<GetSingleUser />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />

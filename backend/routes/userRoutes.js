@@ -3,6 +3,7 @@ import {
   registerUser,
   loginUser,
   getUserProfile,
+  getUserGeographicalLocations,
   // updateUserProfile,
   getUsers,
   deleteUser,
@@ -17,6 +18,7 @@ router.post('/login-user/:role', loginUser);
 router.get('/user-profile', getUserProfile);
 // router.put('/update-user-profile', updateUserProfile);
 router.get('/get-all-users', getUsers);
+router.get('/get-user-geographical-locations', getUserGeographicalLocations);
 router.delete('/delete-user/:id', deleteUser);
 router.get('/get-user/:id', getUserById);
 router.put('/update-user/:id', updateUser);

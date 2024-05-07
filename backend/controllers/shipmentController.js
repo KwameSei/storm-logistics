@@ -1,6 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { get } from "mongoose";
 import moment from "moment";
 import Shipment from "../models/shipmentSchema.js";
+import ShipmentStat from "../models/shipmentStatSchema.js";
+import OverallStats from "../models/overallStats.js";
 import generateUniquetrackingNumber from "../models/shipmentSchema.js";
 import CourierLocation from "../models/courierLocationSchema.js";
 import User from "../models/userSchema.js";
@@ -10,6 +12,7 @@ import notifyAdminAboutShipment from "../utils/notifyAdminAboutShipment.js";
 // import { calculateImportDuty } from "./icumsController.js";
 // import { calculateShipmentCost } from "../utils/calculateShipmentCost.js";
 import Icums from "../models/icumsSchema.js";
+import { format } from "morgan";
 // import { initiatePayment } from "./paymentController.js";
 
 // Calculate shipping cost
@@ -282,7 +285,39 @@ export const approveShipment = async (req, res) => {
 export const getAllShipments = async (req, res) => {
   try {
     const shipments = await Shipment.find();
-    return res.status(200).json(shipments);
+
+    if (!shipments) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "No shipments found"
+      });
+    }
+
+    // Retrieve shipment statistics and overall statistics
+    const shipmentWithStats = await Promise.all(
+      shipments.map(async (shipment) => {
+        // Find shipment statistics
+        const stats = await ShipmentStat.find();
+
+        // Find overall statistics
+        const overallStats = await OverallStats.find();
+        
+        return {
+          ...shipment._doc,
+          stats,
+          overallStats
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Shipments retrieved successfully",
+      data: shipmentWithStats,
+
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to get shipments" });
   }

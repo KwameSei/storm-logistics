@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Table, TableBody, TablePagination, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Table, TableBody, TablePagination, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { StyledTableCell, StyledTableRow } from '../styles/styles';
-import { Delete, PostAdd, Visibility, PlusOne, Tag } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { BlueButton } from '../ButtonStyled';
+import { Delete, PostAdd, Visibility, PlusOne, Tag } from '@mui/icons-material';
 
 const WaybillTable = ({ columns, rows, handleAction }) => {
   const [page, setPage] = useState(0);
@@ -57,7 +57,7 @@ const WaybillTable = ({ columns, rows, handleAction }) => {
                     );
                   })}
                   <StyledTableCell align='center'>
-                    <IconButton onClick={() => handleAction('waybill', row.id)}><BlueButton>Waybill</BlueButton></IconButton>
+                    <div onClick={() => handleAction('waybill', row.id)}><Visibility /></div>
                   </StyledTableCell>
                 </StyledTableRow>
               )

@@ -11,7 +11,7 @@ export const registerSuperAdmin = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(getPass, salt)
 
-    const { name, email, phone, image, password, image_mimetype, role } = req.body;
+    const { name, email, phone, image, password, image_mimetype, role, city, state, country, transactions } = req.body;
 
     // Validate admin input
     if (!name || !email || !password) {
@@ -60,7 +60,11 @@ export const registerSuperAdmin = async (req, res) => {
       image,
       image_mimetype,
       role,
-      phone
+      phone,
+      city,
+      state,
+      country,
+      transactions
     });
 
     let savedAdmin = await newAdmin.save();

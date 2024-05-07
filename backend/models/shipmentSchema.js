@@ -1,4 +1,6 @@
 import mongoose, { trusted } from "mongoose";
+import ShipmentStat from './shipmentStatSchema.js';
+import OverallStats from "./overallStats.js";
 
 const shipmentSchema = new mongoose.Schema({
 
@@ -269,6 +271,255 @@ const carrierReferenceMapping = {};
 function generateUniqueCarrierReferenceNumber(carrier) {
   return carrier + '_' + Math.random().toString(36).substring(2, 9);
 }
+
+// Middleware to update shipment statistics
+shipmentSchema.post('save', async function (shipment) {
+  try {
+    // Find the shipment statistics by shipment ID
+    const shipmentStat = await ShipmentStat.findOneAndUpdate(
+      { year: new Date().getFullYear(), shipmentId: shipment._id },
+      {
+        $inc: {
+          yearly_sales_total: shipment.totalCost,
+          yearly_total_sold_units: shipment.quantity
+        },
+        $addToSet: {
+          'monthly_data': {
+            month: getMonthName(new Date().getMonth()),
+            monthly_sales_total: shipment.totalCost,
+            monthly_total_sold_units: shipment.quantity
+          },
+          'daily_data': {
+            date: formatDate(new Date()),
+            daily_sales_total: shipment.totalCost,
+            daily_total_sold_units: shipment.quantity
+          },
+          'hourly_data': {
+            hour: new Date().getHours().toString(),
+            hourly_sales_total: shipment.totalCost,
+            hourly_total_sold_units: shipment.quantity
+          }
+        }
+      },
+      { upsert: true, new: true }
+    );
+
+    // Save the updated shipment statistics
+    await shipmentStat.save();
+  } catch (error) {
+    console.error("Error updating shipment statistics:", error);
+    error.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    });
+  }
+});
+
+// Middleware to update shipment statistics after deleting a shipment
+shipmentSchema.post('remove', async function (shipment) {
+  try {
+    // Find the shipment statistics by shipment ID
+    const shipmentStat = await ShipmentStat.findOneAndUpdate(
+      { year: new Date().getFullYear(), shipmentId: shipment._id },
+      {
+        $inc: {
+          yearly_sales_total: -shipment.totalCost,
+          yearly_total_sold_units: -shipment.quantity
+        },
+        $pull: {
+          'monthly_data': { month: getMonthName(new Date().getMonth()) },
+          'daily_data': { date: formatDate(new Date()) },
+          'hourly_data': { hour: new Date().getHours().toString() }
+        }
+      },
+      { new: true } // Return the modified document rather than the original
+    );
+
+    // Save the updated shipment statistics
+    await shipmentStat.save();
+  } catch (error) {
+    console.error("Error updating shipment statistics after deleting shipment:", error);
+    error.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    });
+  }
+});
+
+// Get month name
+const getMonthName = (monthIndex) => {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  return months[monthIndex];
+};
+
+// Format date as 'DD/MM/YYYY'
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+// Middleware to update overall statistics
+shipmentSchema.post('save', async function (shipment) {
+  try {
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+    
+    // Find or create the overall statistics document for the current year
+    let overallStats = await OverallStats.findOne({ year: currentYear });
+    
+    if (!overallStats) {
+      overallStats = new OverallStats({
+        year: currentYear,
+        totalShipments: 0,  // Initialize the total shipments to 0
+        totalSubShipmentCosts: shipment.shippingCost,
+        totalShipmentPayments: shipment.totalCost,
+        totalShipmentTrackings: 1,
+        yearlyPaymentTotal: shipment.totalCost,
+        yearlyTotalPaidUnits: shipment.quantity,
+
+        monthlyPaymentData: [
+          {
+            month: getMonthName(new Date().getMonth()),
+            totalPayment: shipment.totalCost,
+            totalPaidUnits: shipment.quantity,
+            totalShipments: shipment.quantity,
+            totalShippingCost: shipment.shippingCost
+          }
+        ],
+
+        dailyPaymentData: [
+          {
+            day: formatDate(new Date()),
+            totalPayment: shipment.totalCost,
+            totalPaidUnits: shipment.quantity,
+            totalShipments: shipment.quantity,
+            totalShippingCost: shipment.shippingCost
+          }
+        ]
+      });
+    } else {
+      // Update the overall statistics document for the current year
+      overallStats.totalShipments += 1;
+      overallStats.totalSubShipmentCosts += shipment.shippingCost;
+      overallStats.totalShipmentPayments += shipment.totalCost;
+      overallStats.totalShipmentTrackings += 1;
+      overallStats.yearlyPaymentTotal += shipment.totalCost;
+      overallStats.yearlyTotalPaidUnits += shipment.quantity;
+
+      // Check if the monthly data for the current month already exists
+      const currentMonthData = overallStats.monthlyPaymentData.find(data => data.month === getMonthName(new Date().getMonth()));
+
+      if (currentMonthData) {
+        // Update the monthly data for the current month
+        currentMonthData.totalPayment += shipment.totalCost;
+        currentMonthData.totalPaidUnits += shipment.quantity;
+        currentMonthData.totalShipments += shipment.quantity;
+        currentMonthData.totalShippingCost += shipment.shippingCost;
+      } else {
+        // Add the monthly data for the current month
+        overallStats.monthlyPaymentData.push({
+          month: getMonthName(new Date().getMonth()),
+          totalPayment: shipment.totalCost,
+          totalPaidUnits: shipment.quantity,
+          totalShipments: shipment.quantity,
+          totalShippingCost: shipment.shippingCost
+        });
+      }
+
+      // Check if the daily data for the current day already exists
+      const currentDayData = overallStats.dailyPaymentData.find(data => data.day === formatDate(new Date()));
+
+      if (currentDayData) {
+        // Update the daily data for the current day
+        currentDayData.totalPayment += shipment.totalCost;
+        currentDayData.totalPaidUnits += shipment.quantity;
+        currentDayData.totalShipments += shipment.quantity;
+        currentDayData.totalShippingCost += shipment.shippingCost;
+      } else {
+        // Add the daily data for the current day
+        overallStats.dailyPaymentData.push({
+          day: formatDate(new Date()),
+          totalPayment: shipment.totalCost,
+          totalPaidUnits: shipment.quantity,
+          totalShipments: shipment.quantity,
+          totalShippingCost: shipment.shippingCost
+        });
+      }
+    }
+
+    // Save the updated overall statistics
+    await overallStats.save();
+  } catch (error) {
+    console.error("Error updating overall statistics:", error);
+    error.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    });
+  }
+});
+
+// Middleware to update overall statistics after deleting a shipment
+shipmentSchema.post('remove', async function (shipment) {
+  try {
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+    
+    // Find the overall statistics document for the current year
+    let overallStats = await OverallStats.findOne({ year: currentYear });
+    
+    if (overallStats) {
+      // Update the overall statistics document for the current year
+      overallStats.totalShipments -= 1;
+      overallStats.totalSubShipmentCosts -= shipment.shippingCost;
+      overallStats.totalShipmentPayments -= shipment.totalCost;
+      overallStats.totalShipmentTrackings -= 1;
+      overallStats.yearlyPaymentTotal -= shipment.totalCost;
+      overallStats.yearlyTotalPaidUnits -= shipment.quantity;
+
+      // Check if the monthly data for the current month already exists
+      const currentMonthData = overallStats.monthlyPaymentData.find(data => data.month === getMonthName(new Date().getMonth()));
+
+      if (currentMonthData) {
+        // Update the monthly data for the current month
+        currentMonthData.totalPayment -= shipment.totalCost;
+        currentMonthData.totalPaidUnits -= shipment.quantity;
+        currentMonthData.totalShipments -= shipment.quantity;
+        currentMonthData.totalShippingCost -= shipment.shippingCost;
+      }
+
+      // Check if the daily data for the current day already exists
+      const currentDayData = overallStats.dailyPaymentData.find(data => data.day === formatDate(new Date()));
+
+      if (currentDayData) {
+        // Update the daily data for the current day
+        currentDayData.totalPayment -= shipment.totalCost;
+        currentDayData.totalPaidUnits -= shipment.quantity;
+        currentDayData.totalShipments -= shipment.quantity;
+        currentDayData.totalShippingCost -= shipment.shippingCost;
+      }
+
+      // Save the updated overall statistics
+      await overallStats.save();
+    }
+  } catch (error) {
+    console.error("Error updating overall statistics after deleting shipment:", error);
+    error.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    });
+  }
+});
 
 const Shipment = mongoose.model('Shipment', shipmentSchema);
 

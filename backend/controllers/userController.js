@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import jsonwebtoken from 'jsonwebtoken';
 import crypto from 'crypto';
+import getCountryIso3 from 'country-iso-2-to-3';
 import dotenv from 'dotenv';
 
 export const registerUser = async (req, res) => {
@@ -14,7 +15,7 @@ export const registerUser = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(getPass, salt)
 
-    const { username, email, phone, address, image, password, image_mimetype, role } = req.body;
+    const { username, email, phone, address, image, password, image_mimetype, role, country, transactions } = req.body;
 
     // Validate user input
     if (!username || !email || !password) {
@@ -42,7 +43,7 @@ export const registerUser = async (req, res) => {
     //  Check if user exists
     const userExists = await User.findOne({ email: emailToLower });
     if (userExists) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         status: 400,
         message: 'User already exists'
@@ -64,7 +65,9 @@ export const registerUser = async (req, res) => {
       image_mimetype,
       role,
       address,
-      phone
+      phone,
+      country,
+      transactions
     });
 
     let savedUser = await newUser.save();
@@ -266,6 +269,49 @@ export const resetPassword = async (req, res) => {
   }
 }
 
+// Get the geographical locations of users
+export const getUserGeographicalLocations = async (req, res) => {
+  try {
+    const users = await User.find();
+    console.log('Users: ', users);
+
+    if (!users) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'No users found'
+      })
+    }
+
+    const mappedLocations = users.reduce((acc, { country }) => {
+      const countryISO3 = getCountryIso3(country.country);
+      if (!acc[countryISO3]) {
+        acc[countryISO3] = 0;
+      }
+      acc[countryISO3]++;
+      return acc;
+    }, {});
+
+    const locations = Object.entries(mappedLocations).map(
+      ([country, count]) => {
+        return { id: country, value: count }
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: locations
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
 // Update user details
 export const updateUser = async (req, res) => {
   try {
@@ -283,6 +329,9 @@ export const updateUser = async (req, res) => {
     user.email = req.body.email || user.email;
     user.phone = req.body.phone || user.phone;
     user.address = req.body.address || user.address;
+    user.city = req.body.city || user.city;
+    user.state = req.body.country || user.country;
+    user.transactions = req.body.transactions || user.transactions
 
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);

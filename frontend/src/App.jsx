@@ -1,9 +1,11 @@
 // import { useState } from 'react'
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from './components';
 import { ToastContainer } from 'react-toastify';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
@@ -22,12 +24,15 @@ import {
   UpdateShipmentLocation,
   Four04
 } from './screens';
+// import { theme } from './theme';
 
 import './App.css'
 
 function App() {
 
   const currentUser = useSelector(state => state.user.currentUser);
+  const mode = useSelector(state => state.global.mode);
+  // const theme = useMemo(() => createTheme(theme(mode)), [mode])
   console.log('Current user in app: ', currentUser);
 
   let currentRole = null;
@@ -59,10 +64,8 @@ function App() {
 
   return (
     <>
-      <div>
-        <Header />
-
-        <ToastContainer
+      <div className='app'>
+      <ToastContainer
           position='top-right'
           autoClose={5000}
           hideProgressBar={false}
@@ -74,9 +77,14 @@ function App() {
           pauseOnHover={true}
           theme='colored'
         />
+
+        {/* <ThemeProvider theme={theme}>
+          <CssBaseline /> */}
+
+          <Header />
         
         <Routes>
-          {currentRole == null && (
+          {currentRole === null && (
             <>
               <Route path="/" element={<Homepage />} />
               <Route path="/home" element={<Homepage />} />
@@ -121,6 +129,7 @@ function App() {
         </Routes>
 
         <Footer />
+        {/* </ThemeProvider> */}
       </div>
     </>
   )

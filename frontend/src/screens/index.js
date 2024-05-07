@@ -7,6 +7,7 @@ export { default as UserDashboard } from './user/dashboard/UserDashboard';
 export { default as DashboardUser } from './user/dashboard/DashboardUser';
 export { default as GetAllUsers } from './user/display/GetAllUsers';
 export { default as GetSingleUser } from './user/display/GetSingleUser';
+export { default as UserGeography } from './user/geography/UserGeography';
 
 // SHIPMENT
 export { default as ShipmentService } from './services/ShipmentService';
@@ -29,6 +30,8 @@ export { default as GetSinglePayment } from './payment/GetSinglePayment';
 export { default as RegisterSuperAdmin } from './superAdmin/auth/RegisterSuperAdmin';
 export { default as SuperAdminDashboard } from './superAdmin/dashboard/SuperAdminDashboard';
 export { default as Dashboard } from './superAdmin/dashboard/Dashboard';
+export { default as UserProfile } from './superAdmin/display/UserProfile';
+export { default as ProfileModal } from './superAdmin/display/ProfileModal';
 
 // ICUMS
 export { default as CreateIcums } from './icums/create/CreateIcums';

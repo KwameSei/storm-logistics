@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Apps, ArrowDownward, ArrowDropDown, BarChart, Chat, Folder, LocalShipping, Logout, Menu, Numbers, Payment, People, Search, Settings, ShoppingBag } from '@mui/icons-material';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AdminPanelSettingsOutlined, Apps, ArrowDownward, ArrowDropDown, BarChart, Chat, Folder, LocalShipping, Logout, Menu, Numbers, Payment, People, Search, Settings, ShoppingBag } from '@mui/icons-material';
 import { Input, Typography } from '@mui/material';
 import Logo from '../../assets/storm-logo.jpg';
 import { authLogout } from '../../state-management/userState/userSlice';
@@ -10,6 +10,8 @@ import classes from './sidebar.module.scss';
 const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [active, setActive] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const currentUser = useSelector(state => state.user.currentUser);
   const currentRole = useSelector(state => state.user.currentUser.data.role);
@@ -21,6 +23,11 @@ const Sidebar = () => {
   const [paymentDropdown, setPaymentDropdown] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
   const [icumsDropdown, setIcumsDropdown] = useState(false);
+  const [analyticsDropdown, setAnalyticsDropdown] = useState(false);
+
+  useEffect(() => {
+    setActive(pathname.substring(1)); // Remove the first character from the pathname
+  }, [pathname]);
 
   // Logout user
   const handleLogout = () => {
@@ -33,7 +40,7 @@ const Sidebar = () => {
     SuperAdmin: [
       'SuperAdmin', 'Users', 'Admin', 'create-shipment',
       'track-shipment', 'approve-shipments', 'get-all-shipments', 'users', 'messages',
-      'analytics', 'file-manager', 'orders', 'settings', 'get-all-payments',
+      'analytics', 'users-geography', 'file-manager', 'orders', 'settings', 'get-all-payments',
       'create-hs-codes'
     ],
     Admin: ['Users'],
@@ -67,7 +74,7 @@ const Sidebar = () => {
         </div>
         <div className={classes.nav_item}>
           <Link to={`/${currentRole.toLowerCase()}-dashboard/dashboard`} className={classes.link}>
-            <Apps className={classes.icon} />
+            <AdminPanelSettingsOutlined className={classes.icon} />
             <span className={classes.dashboard}>Dashboard</span>
           </Link>
           <span className={classes.tool_tip}>Dashboard</span>
@@ -183,11 +190,27 @@ const Sidebar = () => {
           <span className={classes.tool_tip}>Messages</span>
         </div>
         <div className={classes.nav_item}>
-          <Link to='/' className={classes.link}>
+          <div className={classes.link} onClick={() => setAnalyticsDropdown(!analyticsDropdown)}>
             <BarChart className={classes.icon} />
             <span className={classes.dashboard}>Analytics</span>
-          </Link>
+            <ArrowDropDown className={`${classes.dropdown_icon} ${analyticsDropdown ? classes.rotate : ''}`} />
           <span className={classes.tool_tip}>Analytics</span>
+          </div>
+          {analyticsDropdown && (
+            <div className={classes.dropdown}>
+              {hasPermission('users-geography') && (
+                <Link to={`/${currentRole.toLowerCase()}-dashboard/user-geography`} className={classes.link}>
+                  <span className={classes.dashboard}>Users Geography</span>
+                </Link>
+              )}
+              <Link to='/' className={classes.link}>
+                <span className={classes.dashboard}>Reports</span>
+              </Link>
+              <Link to='/' className={classes.link}>
+                <span className={classes.dashboard}>Charts</span>
+              </Link>
+            </div>
+          )}
         </div>
         <div className={classes.nav_item}>
           <Link to='/' className={classes.link}>
