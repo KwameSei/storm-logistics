@@ -27,7 +27,8 @@ export const superAdminAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.token = token;
-    req.SuperAdmin = decoded;
+    // req.SuperAdmin = decoded;
+    req.SuperAdmin = await SuperAdmin.findById(decoded._id).select('-password');
 
     next();
   } catch (error) {

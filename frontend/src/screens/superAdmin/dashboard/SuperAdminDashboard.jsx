@@ -3,6 +3,7 @@ import {
   ApprovePendingShipments,
   CreateShipment,
   CreateIcums,
+  DailyShipment,
   Dashboard,
   GetAllPayments,
   GetSinglePayment,
@@ -11,8 +12,10 @@ import {
   GetSingleUser,
   UserGeography,
   PaymentSuccess,
+  PieChartShipment,
   RegisterSuperAdmin, 
-  RegisterUser, 
+  RegisterUser,
+  RegisterAdmin,
   ShipmentCreationSuccess, 
   TrackShipment,
   UpdateShipmentLocation,
@@ -46,9 +49,12 @@ const SuperAdminDashboard = () => {
           <Route path="/get-single-user/:userId" element={<GetSingleUser />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
+          <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/payment-success/:shipmentId" element={<PaymentSuccess />} />
           <Route path="/get-all-payments" element={<GetAllPayments />} />
           <Route path="/get-single-payment/:paymentId" element={<GetSinglePayment />} />
+          <Route path="/daily-shipment-chart" element={<DailyShipment />} />
+          <Route path="/pie-chart-shipment" element={<PieChartShipment />} />
           {/* Add your other routes here */}
         </Routes>
       </div>

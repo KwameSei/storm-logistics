@@ -6,9 +6,10 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 
 import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import agentRoutes from './routes/agentRoutes.js';
 import shipmentRoutes from './routes/shipmentRoutes.js';
 import superAdminRoutes from './routes/superadminRoutes.js';
-import locationRoutes from './routes/locationRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import courierLocationRoutes from './routes/courierLocationRoutes.js';
 import icumsRoutes from './routes/icumsRoutes.js';
@@ -33,9 +34,10 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 // });
 
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/agent', agentRoutes);
 app.use('/api/shipment', shipmentRoutes);
 app.use('/api/superadmin', superAdminRoutes);
-app.use('/api/location', locationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/shipment-location', courierLocationRoutes);
 app.use('/api/icums', icumsRoutes);

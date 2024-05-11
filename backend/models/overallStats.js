@@ -136,7 +136,87 @@ const overallStatsSchema = new mongoose.Schema({
         }
       }
     ],
-},
+    totalAgents: {
+      type: Number,
+      default: 0
+    },
+    totalAgentsPerYear: {
+        type: Number,
+        default: 0
+    },
+    totalAgentsPerMonth: {
+      type: Number,
+      default: 0
+    },  
+    monthlyAgentsData: [
+      {
+        month: {
+          type: String,
+          required: true
+        },
+        totalAgents: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+    dailyAgentsData: [
+      {
+        day: {
+          type: String,
+          required: true
+        },
+        totalAgents: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+    totalAgentsPerDay: {
+        type: Number,
+        default: 0
+    },
+    totalAdmins: {
+      type: Number,
+      default: 0
+    },
+    totalAdminsPerYear: {
+        type: Number,
+        default: 0
+    },
+    totalAdminsPerMonth: {
+      type: Number,
+      default: 0
+    },  
+    monthlyAdminsData: [
+      {
+        month: {
+          type: String,
+          required: true
+        },
+        totalAdmins: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+    dailyAdminsData: [
+      {
+        day: {
+          type: String,
+          required: true
+        },
+        totalAdmins: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+    totalAdminsPerDay: {
+        type: Number,
+        default: 0
+    },
+  },  
 {
   timestamps: true
 });

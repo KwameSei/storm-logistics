@@ -60,7 +60,6 @@ const CustomTable = ({ columns, rows, handleAction }) => {
                     <IconButton onClick={() => handleAction('view', row.id)}><Visibility /></IconButton>
                     <IconButton onClick={() => handleAction('delete', row.id)}><Delete /></IconButton>
                     <IconButton onClick={() => handleAction('edit', row.id)}><PostAdd /></IconButton>
-                    <IconButton onClick={() => handleAction('waybill', row.id)}><BlueButton>Waybill</BlueButton></IconButton>
                   </StyledTableCell>
                 </StyledTableRow>
               )

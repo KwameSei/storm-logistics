@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -6,11 +6,15 @@ import { useTheme } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { getShipments } from '../../state-management/shipmentState/shipmentSlice';
 
-const OverviewChart = ({ isDashboard = false, view, shipments }) => {
+const OverviewChart = ({ view, shipments }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+
+  const [isTotalShipmentVisible, setIsTotalShipmentVisible] = useState(true);
+  const [isTotalUnitsVisible, setIsTotalUnitsVisible] = useState(true);
+
   // const shipments = useSelector(state => state.shipment.shipments);
-  // console.log('Shipments data: ', shipments);
+  console.log('Shipments data: ', shipments);
   const token = useSelector((state) => state.user.token);
   const currentUser = useSelector((state) => state.user.currentUser);
   // const username = currentUser?.data?.name;
@@ -39,81 +43,185 @@ const OverviewChart = ({ isDashboard = false, view, shipments }) => {
   };
 
   useEffect(() => {
-    // console.log('View:', view);
-    // console.log('useEffect Shipments:', shipments);
     fetchShipments();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Toggle visibility of total shipment line
+  const toggleTotalShipmentVisibility = () => {
+    setIsTotalShipmentVisible((prev) => !prev);
+  };
+
+  // Toggle visibility of total units line
+  const toggleTotalUnitsVisibility = () => {
+    setIsTotalUnitsVisible((prev) => !prev);
+  };
+
+  // Transform shipments data for chart
   const [totalShipmentLine, totalUnitsLine] = useMemo(() => {
-    // if (!shipments || !shipments.data) return [];
-  
     const overview_shipments = shipments?.data || shipments;
-    console.log('Overview shipments: ', overview_shipments);
   
     const totalShipmentLine = {
       id: 'total-shipment',
-      color: 'hsl(0, 70%, 50%)',  // Red
-      data: [],
+      color: 'hsl(0, 70%, 50%)',
+      data: [],  
     };
+    
     const totalUnitsLine = {
       id: 'total-units',
-      color: 'hsl(120, 70%, 50%)',  // Green
-      data: [],
-    };
+      color: 'hsl(120, 70%, 50%)',
+      data: []
+    };    
   
-    overview_shipments.forEach((shipment) => {
-      const stats = shipment.stats;
-      console.log('Shipment stats: ', stats);
-      if (!stats || !stats.length) return;
+    // Create a map to accumulate values for each month
+    const monthlyAccumulator = {};
   
-      const monthlyData = stats[0].monthly_data;  // Get the first year data
-      console.log('Monthly data: ', monthlyData);
-      if (!monthlyData || !monthlyData.length) return;
+    overview_shipments.forEach(({ stats }) => {
+      stats.forEach(({ monthly_data }) => {
+        monthly_data.forEach(({ month, monthly_sales_total, monthly_total_sold_units }) => {
+          if (!monthlyAccumulator[month]) {
+            monthlyAccumulator[month] = {
+              sales: 0,
+              units: 0
+            };
+          }
   
-      monthlyData.forEach(({ month, monthly_sales_total, monthly_total_sold_units }) => {
-        const existingPointShipment = totalShipmentLine.data.find((point) => point.x === month);
-        if (existingPointShipment) {
-          existingPointShipment.y += monthly_sales_total;
-        } else {
-          totalShipmentLine.data.push({ x: month, y: monthly_sales_total });
-        }
-        
-        const existingPointUnits = totalUnitsLine.data.find((point) => point.x === month);
-        if (existingPointUnits) {
-          existingPointUnits.y += monthly_total_sold_units;
-        } else {
-          totalUnitsLine.data.push({ x: month, y: monthly_total_sold_units });
-        }
+          // Accumulate sales and units for each month
+          monthlyAccumulator[month].sales += monthly_sales_total;
+          monthlyAccumulator[month].units += monthly_total_sold_units;
+        });
       });
     });
   
+    // Push accumulated values into the data array
+    Object.entries(monthlyAccumulator).forEach(([month, { sales, units }]) => {
+      totalShipmentLine.data.push({ x: month, y: sales });
+      totalUnitsLine.data.push({ x: month, y: units });
+    });
+  
+    console.log('Transformed shipments for total shipment line:', totalShipmentLine);
+    console.log('Transformed shipments for total units line:', totalUnitsLine);
+  
     return [totalShipmentLine, totalUnitsLine];
-  }, [shipments]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [shipments]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  // const [totalShipmentLine, totalUnitsLine] = useMemo(() => {
+  //   // if (!shipments || !shipments.data) return [];
+  
+  //   const overview_shipments = shipments?.data || shipments;
+  //   console.log('Overview shipments: ', overview_shipments);
+  
+  //   const totalShipmentLine = {
+  //     id: 'total-shipment',
+  //     color: 'hsl(0, 70%, 50%)',
+  //     data: []
+  //   };
+    
+  //   const totalUnitsLine = {
+  //     id: 'total-units',
+  //     color: 'hsl(120, 70%, 50%)',
+  //     data: []
+  //   };    
+
+  //   Object.values(overview_shipments).reduce(
+  //     (acc, { month, monthly_sales_total, monthly_total_sold_units }) => {
+  //       const curSales = acc.sales + monthly_sales_total;
+  //       const curUnits = acc.units + monthly_total_sold_units;
+
+  //       totalShipmentLine.shipments = [
+  //         ...totalShipmentLine.data,  // Spread the existing data
+  //         { x: month, y: curSales }
+  //       ];
+  //       totalUnitsLine.data = [
+  //         ...totalUnitsLine.data,  // Spread the existing data
+  //         { x: month, y: curUnits }
+  //       ];
+
+  //       return { sales: curSales, units: curUnits };
+  //     },
+  //     { sales: 0, units: 0 }
+  //   )
+  
+  //   // overview_shipments.forEach((shipment) => {
+  //   //   const stats = shipment.stats;
+  //   //   console.log('Shipment stats: ', stats);
+  //   //   if (!stats || !stats.length) return;
+  
+  //   //   const monthlyData = stats[0].monthly_data;  // Get the first year data
+  //   //   console.log('Monthly data: ', monthlyData);
+  //   //   if (!monthlyData || !monthlyData.length) return;
+  
+  //   //   monthlyData.forEach(({ month, monthly_sales_total, monthly_total_sold_units }) => {
+  //   //     const existingPointShipment = totalShipmentLine.data.find((point) => point.x === month);
+  //   //     if (existingPointShipment) {
+  //   //       existingPointShipment.y += monthly_sales_total;
+  //   //     } else {
+  //   //       totalShipmentLine.data.push({ x: month, y: monthly_sales_total });
+  //   //     }
+        
+  //   //     const existingPointUnits = totalUnitsLine.data.find((point) => point.x === month);
+  //   //     if (existingPointUnits) {
+  //   //       existingPointUnits.y += monthly_total_sold_units;
+  //   //     } else {
+  //   //       totalUnitsLine.data.push({ x: month, y: monthly_total_sold_units });
+  //   //     }
+  //   //   });
+  //   // });
+
+  //   console.log('Transformed shipments for total shipment line:', totalShipmentLine);
+  //   console.log('Transformed shipments for total units line:', totalUnitsLine);
+  
+  //   return [totalShipmentLine, totalUnitsLine];
+  // }, [shipments]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  console.log('Data passed to ResponsiveLine:', [totalShipmentLine, totalUnitsLine]);
   
   return (
-    <div>
+    <div style={{ width: '90%', height: '400px', margin: '20px auto', marginBottom: '5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <button
+          style={{
+            backgroundColor: isTotalShipmentVisible ? theme.palette.primary.main : theme.palette.secondary.main,
+            color: 'white',
+            padding: '10px',
+            margin: '5px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+          onClick={toggleTotalShipmentVisibility}
+        > Total Shipment </button>
+        <button
+          style={{
+            backgroundColor: isTotalUnitsVisible ? theme.palette.primary.main : theme.palette.secondary.main,
+            color: 'white',
+            padding: '10px',
+            margin: '5px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+          onClick={toggleTotalUnitsVisibility}
+        > Total Units </button>
+      </div>
       <ResponsiveLine
-        // data={[totalShipmentLine, totalUnitsLine]}
-        data={view === 'total-shipment' ? [totalShipmentLine] : [totalUnitsLine]}
-        margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
-        xScale={{ type: 'point' }}
+        data={[
+          isTotalShipmentVisible ? totalShipmentLine : null,
+          isTotalUnitsVisible ? totalUnitsLine : null,
+        ].filter(Boolean)}
+        margin={{ top: 20, right: 50, bottom: 50, left: 80 }}
+        xScale={{ type: 'point', min: 'auto', max: 'auto', stacked: false, reverse: false}}
         yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
         yFormat=" >-.2f"
         curve="catmullRom"
         axisTop={null}
         axisRight={null}
         axisBottom={{
-          format: (value) => {
-            // if (value === 'Jan') return 'January';
-            if (isDashboard) return value.slice(0, 3);
-            return value;
-          },
+          format: (value) => value.toString().substring(0, 3),  // Format the month (e.g. Jan, Feb, Mar, ...
           orient: 'bottom',
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          // legend: 'Month',
-          legend: isDashboard ? '' : 'Month',
+          legend: 'Month',
           legendOffset: 36,
           legendPosition: 'middle',
         }}
@@ -122,8 +230,7 @@ const OverviewChart = ({ isDashboard = false, view, shipments }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          // legend: 'Total',
-          legend: isDashboard ? '' : `Total ${view === 'total-shipment' ? 'Shipment' : 'Units'} for Year`,
+          legend: `Total ${view === 'total-shipment' ? 'Shipment' : 'Units'} for Year`,
           legendOffset: -60,
           legendPosition: 'middle',
         }}
@@ -134,8 +241,7 @@ const OverviewChart = ({ isDashboard = false, view, shipments }) => {
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}
         useMesh={true}
-        legends={
-          !isDashboard ? [
+        legends={[
           {
             anchor: 'bottom-right',
             direction: 'column',
@@ -160,8 +266,18 @@ const OverviewChart = ({ isDashboard = false, view, shipments }) => {
               },
             ],
           }
-        ] : undefined
-      }
+        ]}
+        enablePoints={true}
+        enableSlices={'x'}
+        enableCrosshair={true}
+        enableGridX={true}
+        enableGridY={true}
+        enableArea={true}
+        animate={true}
+        motionStiffness={90}
+        motionDamping={15}
+        lineWidth={3}
+        path={view === 'total-shipment' ? 'monotoneX' : 'linear'}
       />
     </div>
   )

@@ -57,7 +57,7 @@ const WaybillTable = ({ columns, rows, handleAction }) => {
                     );
                   })}
                   <StyledTableCell align='center'>
-                    <div onClick={() => handleAction('waybill', row.id)}><Visibility /></div>
+                    <div onClick={() => handleAction('waybill', row.id)}><BlueButton>Waybill</BlueButton></div>
                   </StyledTableCell>
                 </StyledTableRow>
               )

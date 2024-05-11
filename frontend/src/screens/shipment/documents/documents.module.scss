@@ -8,7 +8,9 @@
   flex-direction: column;
   width: 95%;
   margin-top: 10rem;
+  margin-bottom: 5rem;
   margin-left: 2.5%;
+  padding: 1rem 0;
   background-color: $storm-white;
 }
 
@@ -16,8 +18,10 @@
   width: 95%;
   // padding: 10px;
   margin-left: 2.5%;
+  margin-top: 2rem;
   margin-bottom: 2rem;
   border: 2px solid $storm-blue;
+  background-color: $storm-white;
 
   .watermark {
     // // position: absolute;

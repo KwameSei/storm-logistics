@@ -124,7 +124,9 @@ const Dashboard = () => {
   return (
     <div className={classes.dashboard}>
       <Container className={classes.container}>
-        <FormControl className={classes.formControl}>
+        <Box sx={{ flexGrow: 1 }} className={classes.main_box}>
+          <Typography variant="h3" className={classes.username}>Welcome to your Dashboard, <span>{username}</span></Typography>
+          <FormControl className={classes.formControl}>
           <InputLabel id="view">View</InputLabel>
           <Select
             labelId="view"
@@ -141,8 +143,6 @@ const Dashboard = () => {
         {view === 'shipments' && <OverviewChart isDashboard view={view} shipments={shipments} />}
         {view === 'payments' && <OverviewChart isDashboard view={view} payments={payments} />}
         {view === 'users' && <OverviewChart isDashboard view={view} users={users} />}
-        <Box sx={{ flexGrow: 1 }} className={classes.main_box}>
-          <Typography variant="h3" className={classes.username}>Welcome to your Dashboard, <span>{username}</span></Typography>
         <Grid container spacing={3} className={classes.main_grid}>
           <Grid item xs={12} sm={6} md={4} className={classes.sub_grid}>
             <Paper elevation={3} className={classes.paper}>

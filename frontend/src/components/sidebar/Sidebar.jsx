@@ -22,6 +22,7 @@ const Sidebar = () => {
   const [shipmentDropdown, setShipmentDropdown] = useState(false);
   const [paymentDropdown, setPaymentDropdown] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const [adminDropdown, setAdminDropdown] = useState(false);
   const [icumsDropdown, setIcumsDropdown] = useState(false);
   const [analyticsDropdown, setAnalyticsDropdown] = useState(false);
 
@@ -38,12 +39,12 @@ const Sidebar = () => {
   // Role-based permissions definition
   const rolePermissions = {
     SuperAdmin: [
-      'SuperAdmin', 'Users', 'Admin', 'create-shipment',
-      'track-shipment', 'approve-shipments', 'get-all-shipments', 'users', 'messages',
-      'analytics', 'users-geography', 'file-manager', 'orders', 'settings', 'get-all-payments',
+      'SuperAdmin', 'Users', 'Admin', 'create-admin', 'create-shipment',
+      'track-shipment', 'approve-shipments', 'get-all-shipments', 'daily-shipment-chart', 'users', 'messages',
+      'shipment-piechart', 'analytics', 'users-geography', 'file-manager', 'orders', 'settings', 'get-all-payments',
       'create-hs-codes'
     ],
-    Admin: ['Users'],
+    Admin: ['Users', 'Admin'],
     User: ['create-shipment', 'track-shipment']
   };
 
@@ -126,21 +127,31 @@ const Sidebar = () => {
                 <Link to='/super-admin' className={classes.link}>
                   <span className={classes.dashboard}>Super Admin</span>
                 </Link>
-                <Link to='/admin' className={classes.link}>
-                  <span className={classes.dashboard}>Admin</span>
-                </Link>
+                <div className={classes.link} onClick={() => setAdminDropdown(!adminDropdown)}>
+                  <span className={classes.dashboard}>Admins</span>
+                  <ArrowDropDown className={`${classes.dropdown_icon} ${adminDropdown ? classes.rotate : ''}`} />
+                </div>
+                {adminDropdown && (
+                  <div className={classes.dropdown}>
+                    {hasPermission('create-admin') && (
+                      <Link to={`/${currentRole.toLowerCase()}-dashboard/register-admin`} className={classes.link}>
+                        <span className={classes.dashboard}>Create Admin</span>
+                      </Link>
+                    )}
+                  </div>
+                )}
                 <div className={classes.link} onClick={() => setShowDropdown(!showDropdown)}>
                   {/* <People className={classes.icon} /> */}
                   <span className={classes.dashboard}>Users</span>
                   <ArrowDropDown className={`${classes.dropdown_icon} ${showDropdown ? classes.rotate : ''}`} />
                 </div>
-              {showDropdown && (
-                <div className={classes.dropdown}>
-                  <Link to={`/${currentRole.toLowerCase()}-dashboard/get-all-users`} className={classes.link}>
-                    <span className={classes.dashboard}>Get All Users</span>
-                  </Link>
-                </div>
-              )}
+                {showDropdown && (
+                  <div className={classes.dropdown}>
+                    <Link to={`/${currentRole.toLowerCase()}-dashboard/get-all-users`} className={classes.link}>
+                      <span className={classes.dashboard}>Get All Users</span>
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -201,6 +212,16 @@ const Sidebar = () => {
               {hasPermission('users-geography') && (
                 <Link to={`/${currentRole.toLowerCase()}-dashboard/user-geography`} className={classes.link}>
                   <span className={classes.dashboard}>Users Geography</span>
+                </Link>
+              )}
+              {hasPermission('daily-shipment-chart') && (
+                <Link to={`/${currentRole.toLowerCase()}-dashboard/daily-shipment-chart`} className={classes.link}>
+                  <span className={classes.dashboard}>Daily Shipment Chart</span>
+                </Link>
+              )}
+              {hasPermission('shipment-piechart') && (
+                <Link to={`/${currentRole.toLowerCase()}-dashboard/pie-chart-shipment`} className={classes.link}>
+                  <span className={classes.dashboard}>Pie Chart</span>
                 </Link>
               )}
               <Link to='/' className={classes.link}>

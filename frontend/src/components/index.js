@@ -22,3 +22,4 @@ export { default as GeoData } from './data/GeoData';
 
 // Charts
 export { default as OverviewChart } from './charts/OverviewChart';
+export { default as PieChart } from './charts/PieChart';

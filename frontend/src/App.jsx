@@ -9,6 +9,8 @@ import { createTheme } from '@mui/material/styles';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
+  AdminDashboard,
+  LoginAdmin,
   CheckOut,
   GetAQuote,
   PaymentCallback,
@@ -93,6 +95,7 @@ function App() {
               <Route path="/create-shipment" element={<CreateShipment />} />
               <Route path="/shipment-creation-success" element={<ShipmentCreationSuccess />} />;
               <Route path="/user-register" element={<RegisterUser />} />
+              <Route path="/login-admin" element={<LoginAdmin />} />
               <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
               <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
               {/* <Route path="/checkout" element={<CheckOut />} /> */}
@@ -123,6 +126,10 @@ function App() {
 
           {currentRole === 'Admin' && (
             <>
+              <Route path="/admin-dashboard/*" element={<AdminDashboard />} />
+              <Route path="/" element={<Homepage />} />
+              <Route path="/home" element={<Homepage />} />
+              <Route path='/*' element={<Four04 />} />
             </>
           )}
           

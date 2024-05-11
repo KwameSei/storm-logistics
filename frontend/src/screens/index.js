@@ -29,6 +29,10 @@ export { default as GetSinglePayment } from './payment/GetSinglePayment';
 // ADMIN / SUPER ADMIN
 export { default as RegisterSuperAdmin } from './superAdmin/auth/RegisterSuperAdmin';
 export { default as SuperAdminDashboard } from './superAdmin/dashboard/SuperAdminDashboard';
+export { default as RegisterAdmin } from './admin/auth/RegisterAdmin';
+export { default as LoginAdmin } from './admin/auth/LoginAdmin';
+export { default as DashboardAdmin } from './admin/dashboard/Dashboard';
+export { default as AdminDashboard } from './admin/dashboard/AdminDashboard';
 export { default as Dashboard } from './superAdmin/dashboard/Dashboard';
 export { default as UserProfile } from './superAdmin/display/UserProfile';
 export { default as ProfileModal } from './superAdmin/display/ProfileModal';
@@ -41,6 +45,11 @@ export { default as GetAQuote } from './quote/GetAQuote';
 
 // DOCUMENTS
 export { default as Waybill } from './shipment/documents/Waybill';
+
+// Analysis
+export { default as DailyShipment } from './analysis/DailyShipment';
+export { default as PieChartShipment } from './analysis/PieChartShipment';
+
 
 // 404
 export { default as Four04 } from './404';
