@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import {
   ApprovePendingShipments,
+  AgentApproval,
   CreateShipment,
   CreateIcums,
   DailyShipment,
@@ -55,6 +56,7 @@ const SuperAdminDashboard = () => {
           <Route path="/get-single-payment/:paymentId" element={<GetSinglePayment />} />
           <Route path="/daily-shipment-chart" element={<DailyShipment />} />
           <Route path="/pie-chart-shipment" element={<PieChartShipment />} />
+          <Route path="/approve-agents" element={<AgentApproval />} />
           {/* Add your other routes here */}
         </Routes>
       </div>

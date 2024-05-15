@@ -74,7 +74,7 @@ const Navbar = () => {
         <Link to='/track-shipment'>
           <RedButton className={`${classes.button_items} ${classes.blink_animation}`}>Track your shipment</RedButton>
         </Link>
-        <Link to='/user-register'>
+        <Link to='/login-users'>
           <BlackButton className={classes.button_items}>Portal Login</BlackButton>
         </Link>
          {/* Conditionally render profile link if currentUser exists */}

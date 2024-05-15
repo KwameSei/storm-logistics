@@ -4,6 +4,7 @@ import {
   registerAgent,
   loginAgent,
   getAgentProfile,
+  getPendingAgents,
   forgotPassword,
   resetPassword,
   getAgentById,
@@ -18,9 +19,10 @@ import {
 
 const router = express.Router();
 
-router.post("/register-agent", registerAgent);
-router.post("/login-agent", loginAgent);
-router.get("/approve-agent/:id", approveAgent);
+router.post("/register-agent/:role", registerAgent);
+router.post("/login-agent/:role", loginAgent);
+router.get("/pending-agents", getPendingAgents);
+router.put("/approve-agent/:id", approveAgent);
 router.get("/agent-profile/:id", getAgentProfile);
 router.post("/forgot-password", forgotPassword);
 router.put("/reset-password/:resetToken", resetPassword);

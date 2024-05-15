@@ -9,6 +9,12 @@ export { default as GetAllUsers } from './user/display/GetAllUsers';
 export { default as GetSingleUser } from './user/display/GetSingleUser';
 export { default as UserGeography } from './user/geography/UserGeography';
 
+// AGENT
+export { default as RegisterAgent } from './agent/auth/RegisterAgent';
+export { default as AgentDashboard } from './agent/dashboard/AgentDashboard';
+export { default as AgentCreationSuccess } from './agent/agent-creation-success/AgentCreationSuccess';
+export { default as AgentApproval } from './agent/agent-approval/AgentApproval';
+
 // SHIPMENT
 export { default as ShipmentService } from './services/ShipmentService';
 export { default as TrackShipment } from './shipment/tracking/TrackShipment';
@@ -50,6 +56,8 @@ export { default as Waybill } from './shipment/documents/Waybill';
 export { default as DailyShipment } from './analysis/DailyShipment';
 export { default as PieChartShipment } from './analysis/PieChartShipment';
 
+// NON ADMINS
+export { default as LoginNonAdmins } from './non-admins/LoginNonAdmins';
 
 // 404
 export { default as Four04 } from './404';

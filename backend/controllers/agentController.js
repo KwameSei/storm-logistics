@@ -146,6 +146,33 @@ export const approveAgent = async (req, res) => {
   }
 }
 
+// Fetch all pending agents
+export const getPendingAgents = async (req, res) => {
+  try {
+    const agents = await Agent.find({ status: 'Pending' });
+
+    if (!agents) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: 'No agents found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: agents
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: error.message
+    })
+  }
+}
+
 // Login agent
 export const loginAgent = async (req, res) => {
   try {

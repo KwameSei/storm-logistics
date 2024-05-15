@@ -1,0 +1,44 @@
+@import '../../components/styles/variables.scss';
+
+.non_admins_main {
+  margin-top: 10rem;
+  padding-top: 5px;
+  background-color: $storm-white;
+  .non_admins_container {
+    display: flex;
+    align-items: center;
+    .left, .right {
+      width: 50%;
+      margin-bottom: 0;
+      .heading {
+        text-align: center;
+        margin: 0;
+        margin-bottom: -6rem;
+      }
+      .components {
+        margin-bottom: -10rem;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media screen and (max-width: 1024px) {
+  .non_admins_main {
+    margin-top: 4.5rem;
+    .non_admins_container {
+      flex-direction: column;
+      .left, .right {
+        width: 90%;
+        padding: 1rem;
+        .heading {
+          margin-top: -1rem;
+          // margin-bottom: -12rem;
+        }
+        .components {
+          border: none;
+        }
+      }
+    }
+  }
+}

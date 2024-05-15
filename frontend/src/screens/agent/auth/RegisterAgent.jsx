@@ -1,47 +1,52 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { CircularProgress, DialogActions, DialogContent, DialogContentText, IconButton, Input, InputAdornment, TextField } from "@mui/material";
 import { BlueButton } from "../../../components/ButtonStyled";
+import { CountryDropdown } from "../../../components";
 import { authSuccess, underControl } from "../../../state-management/userState/userSlice";
 
 import classes from '../../../components/styles/auth.module.scss';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const RegisterSuperAdmin = ({ situation }) => {
+const RegisterAgent = ({ situation }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
+  const [openPopup, setOpenPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [title, setTitle] = useState('Login')
   const [toggle, setToggle] = useState(false);
   // const [error, setError] = useState('');
 
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [nameError, setNameError] = useState(false);
+  const [country, setCountry] = useState({country: '', state: ''});
+  const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [countryError, setCountryError] = useState(false);
   // const [address, setAddress] = useState('');
   // const [phone, setPhone] = useState('');
 
-  const currentUser = useSelector((state) => state.user.currentUser);
+  const currentUser = useSelector((state) => state.user?.currentUser);
+  console.log('Current user in agent component: ', currentUser);
   const currentRole = currentUser?.data?.role;
+  console.log(`Current role in agent component: ${currentRole}`)
   const status = useSelector((state) => state.user.status);
   const error = useSelector((state) => state.user.error);
-  const token = useSelector((state) => state.user.token);
-
-  console.log('Super admin role: ', currentRole);
-  console.log('Supper admin current user: ', currentUser);
+  const token = currentUser?.token;
+  console.log('Token in agent component: ', token);
+  const role = 'Agent';
 
   const URL = import.meta.env.VITE_SERVER_URL;
-  const role = currentRole || 'SuperAdmin';
+
   const isLoggedIn = !isRegistered
 
   // Use useEffect to change the title of the page
@@ -50,29 +55,30 @@ const RegisterSuperAdmin = ({ situation }) => {
   }, [isRegistered]);
 
   const fields = {
-    name,
+    username,
     email,
     password,
+    country,
     confirmPassword,
-    role: currentRole
+    role
   }
 
-  // Register Super Admin
-  const registerSuperAdmin = async (e) => {
+  // Register Agent
+  const registerAgent = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const name = e.target.name.value;
+    const username = e.target.username.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
 
-    if (name === '' || name === null || name === undefined || name.length < 3 || name.length > 50) {
-      setNameError(true);
+    if (username === '' || username === null || username === undefined || username.length < 3 || username.length > 50) {
+      setUsernameError(true);
       setLoading(false);
-      return toast.error('Name is required and must be between 3 and 50 characters');
+      return toast.error('Username is required and must be between 3 and 50 characters');
     } else {
-      setNameError(false);
+      setUsernameError(false);
     }
 
     if (email === '' || email === null || email === undefined || email.length < 3 || email.length > 50) {
@@ -100,7 +106,7 @@ const RegisterSuperAdmin = ({ situation }) => {
     }
 
     try {
-      const res = await axios.post(`${URL}/api/superadmin/register-superadmin/${role}`, fields, {
+      const res = await axios.post(`${URL}/api/agent/register-agent/${role}`, fields, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` || `Bearer ${currentUser.token || ''}`
@@ -108,13 +114,21 @@ const RegisterSuperAdmin = ({ situation }) => {
       });
       console.log('API response', res);
 
-      const admin = res.data;
-      console.log('User', admin);
+      const agent = res.data;
+      console.log('Agent', agent);
 
-      dispatch(authSuccess(admin));
-      toast.success('Super admin registered successfully');
+      console.log('Token', agent.token);
+      
+      // Store the token in the local storage
+      if (agent.token) {
+        localStorage.setItem('token', agent.token);
+      }
+
+      dispatch(authSuccess(agent));
       setLoading(false);
-      navigate('/superadmin-dashboard/dashboard');      
+      toast.success('Agent registered successfully');
+      // navigate('/agent-dashboard/dashboard');
+      navigate('/agent-creation-success');
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -122,13 +136,13 @@ const RegisterSuperAdmin = ({ situation }) => {
     }
   }
 
-  const loginSuperAdmin = async (e) => {
+  const loginAgent = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     const email = e.target.email.value;
     const password = e.target.password.value;
-
+  
     if (email === '' || email === null || email === undefined || email.length < 3 || email.length > 50) {
       setEmailError(true);
       setLoading(false);
@@ -136,7 +150,7 @@ const RegisterSuperAdmin = ({ situation }) => {
     } else {
       setEmailError(false);
     }
-
+  
     if (password === '' || password === null || password === undefined || password.length < 3 || password.length > 50) {
       setPasswordError(true);
       setLoading(false);
@@ -144,56 +158,56 @@ const RegisterSuperAdmin = ({ situation }) => {
     } else {
       setPasswordError(false);
     }
-
+  
     try {
-      const res = await axios.post(`${URL}/api/superadmin/login-superadmin/${role}`, fields, {
+      const res = await axios.post(`${URL}/api/agent/login-agent/${role}`, fields, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` || `Bearer ${currentUser.token || ''}`
         },
       });
-
-      console.log('Response after super admin login: ', res)
-
-      if (res.data.success) {
-        // Extract the token from the response
-        const token = res.data.token
-
-        // Extract the role from the response
-        const adminRole = res.data.data?.role;
-        console.log('adminRole: ', adminRole)
-        
-
-        // Store the token and role in the local storage
-        localStorage.setItem('token', token);
-        localStorage.setItem('currentRole', currentRole)
-
-        const admin = res.data;
-        console.log('User', admin);
-
-        dispatch(authSuccess(admin, adminRole));
+  
+      const agent = res.data;
+  
+      // Check if the agent is approved by the admin
+      if (agent.approvedByAdmin === false) {
+        toast.error('Your account has not been approved by admin yet.');
         setLoading(false);
-        toast.success('Super admin logged in successfully');
-        navigate('/superadmin-dashboard/dashboard');
-      } else {
-        navigate('/')
+        return;
       }
+  
+      // Extract the token from the response
+      // const token = res.data.token;
+  
+      // Extract the role from the response
+      const agentRole = agent.role;
+  
+      console.log('Token', agent.token);
+      
+      // Store the token in the local storage
+      if (agent.token) {
+        localStorage.setItem('token', agent.token);
+      }
+      localStorage.setItem('currentRole', agentRole);
+  
+      dispatch(authSuccess(agent, agentRole));
+      setLoading(false);
+      toast.success('Agent logged in successfully');
+      navigate('/agent-dashboard/dashboard');
     } catch (error) {
       console.log(error);
       toast.error(error.message);
       setLoading(false);
-    } finally {
-      setLoading(false);
     }
-  }
+  };    
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
     if (isRegistered) {
-      registerSuperAdmin(e);
+      registerAgent(e);
     } else {
-      loginSuperAdmin(e);
+      loginAgent(e);
     }
   }
 
@@ -208,8 +222,12 @@ const RegisterSuperAdmin = ({ situation }) => {
     }
   }, [ status, dispatch, navigate, error ]);
 
+  const handleCountryChange = (selectedCountry) => {
+    setCountry(selectedCountry);
+  }
+
   return (
-    <div className={classes.register_user} style={{ marginTop: '10rem', padding: '5rem 0'}}>
+    <div className={classes.register_user}>
       <form className={classes.form} onSubmit={handleSubmit}>
         <h2>{title}</h2>
         <TextField
@@ -222,7 +240,6 @@ const RegisterSuperAdmin = ({ situation }) => {
           variant="outlined"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
         />
         <TextField
           error={passwordError}
@@ -279,15 +296,26 @@ const RegisterSuperAdmin = ({ situation }) => {
             }}
           />
           <TextField
-            error={nameError}
-            helperText={nameError && 'Name must be between 3 and 50 characters'}
+            error={usernameError}
+            helperText={usernameError && 'Name must be between 3 and 50 characters'}
             required
             className={classes.form_input}
-            id="name"
-            label="name"
+            id="username"
+            label="Username"
             variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <CountryDropdown
+            error={countryError}
+            helperText={countryError && 'Country is required'}
+            required
+            className={classes.form_input}
+            id="country"
+            label="Country"
+            variant="outlined"
+            value={country}
+            onChange={handleCountryChange}
           />
           </>
         )}
@@ -337,4 +365,4 @@ const RegisterSuperAdmin = ({ situation }) => {
   )
 }
 
-export default RegisterSuperAdmin;
+export default RegisterAgent;

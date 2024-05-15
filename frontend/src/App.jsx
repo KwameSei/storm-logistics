@@ -10,7 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import {
   AdminDashboard,
+  AgentDashboard,
+  AgentCreationSuccess,
   LoginAdmin,
+  LoginNonAdmins,
   CheckOut,
   GetAQuote,
   PaymentCallback,
@@ -37,32 +40,37 @@ function App() {
   // const theme = useMemo(() => createTheme(theme(mode)), [mode])
   console.log('Current user in app: ', currentUser);
 
-  let currentRole = null;
+  // let currentRole = null;
 
-  if (currentUser) {
-    console.log('Data found in currentUser:', currentUser.data);
-    
-    // Check if the user is a Super Admin
-    if (currentUser.data && currentUser.data.role === 'SuperAdmin') {
-      currentRole = 'SuperAdmin';
-    } 
-    // Check if the user is an admin (if admin property exists)
-    else if (currentUser.data && currentUser.data.role === 'User') {
-      currentRole = 'User';
-    } 
-    // If the user is neither Super Admin nor admin, consider them a regular user
-    else {
-      currentRole = 'Admin';
-    }
-  }
+  // if (currentUser) {
+  //   console.log('Data found in currentUser:', currentUser.data);
+  //   if (currentUser.data && currentUser.data.role === 'SuperAdmin') {
+  //     currentRole = 'SuperAdmin';
+  //   } 
+  //   else if (currentUser.data && currentUser.data.role === 'User') {
+  //     currentRole = 'User';
+  //   }
+  //   else if (currentUser.data && currentUser.data.role === 'Agent') {
+  //     currentRole = 'Agent';
+  //   }
+  //   else {
+  //     currentRole = 'Admin';
+  //   }
+  // }
 
-  console.log('Current role in app: ', currentRole);
+  // console.log('Current role in app: ', currentRole);
+
+  // useEffect(() => {
+  //   if (currentRole) {
+  //     localStorage.setItem('currentRole', currentRole)
+  //   }
+  // }, [currentRole])
 
   useEffect(() => {
-    if (currentRole) {
-      localStorage.setItem('currentRole', currentRole)
+    if (currentUser && currentUser.data && currentUser.data.role) {
+      localStorage.setItem('currentRole', currentUser.data.role);
     }
-  }, [currentRole])
+  }, [currentUser]);
 
   return (
     <>
@@ -86,27 +94,7 @@ function App() {
           <Header />
         
         <Routes>
-          {currentRole === null && (
-            <>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/home" element={<Homepage />} />
-              <Route path="/all-services-display" element={<AllServicesDisplay />} />
-              <Route path="/track-shipment" element={<TrackShipment />} />
-              <Route path="/create-shipment" element={<CreateShipment />} />
-              <Route path="/shipment-creation-success" element={<ShipmentCreationSuccess />} />;
-              <Route path="/user-register" element={<RegisterUser />} />
-              <Route path="/login-admin" element={<LoginAdmin />} />
-              <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
-              <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
-              {/* <Route path="/checkout" element={<CheckOut />} /> */}
-              <Route path="/checkout/:shipmentId" element={<CheckOut />} />
-              <Route path="/payment-callback" element={<PaymentCallback />} />
-              <Route path="/get-a-quote" element={<GetAQuote />} />
-              <Route path='/*' element={<Four04 />} />
-            </>
-          )}
-
-          {currentRole === 'SuperAdmin' && (
+          {currentUser?.data?.role === 'SuperAdmin' && (
             <>
               <Route path="/superadmin-dashboard/*" element={<SuperAdminDashboard />} />
               <Route path="/" element={<Homepage />} />
@@ -115,7 +103,7 @@ function App() {
             </>
           )}
 
-          {currentRole === 'User' && (
+          {currentUser?.data?.role === 'User' && (
             <>
               <Route path="/user-dashboard/*" element={<UserDashboard />} />
               <Route path="/" element={<Homepage />} />
@@ -124,7 +112,7 @@ function App() {
             </>
           )}
 
-          {currentRole === 'Admin' && (
+          {currentUser?.data?.role === 'Admin' && (
             <>
               <Route path="/admin-dashboard/*" element={<AdminDashboard />} />
               <Route path="/" element={<Homepage />} />
@@ -132,7 +120,32 @@ function App() {
               <Route path='/*' element={<Four04 />} />
             </>
           )}
+
+          {currentUser?.data?.role === 'Agent' && (
+            <>
+              <Route path="/agent-dashboard/*" element={<AgentDashboard />} />
+              <Route path="/" element={<Homepage />} />
+              <Route path="/home" element={<Homepage />} />
+              <Route path='/*' element={<Four04 />} />
+            </>
+          )}
           
+          <Route path="/" element={<Homepage />} />
+          <Route path="/home" element={<Homepage />} />
+          <Route path="/all-services-display" element={<AllServicesDisplay />} />
+          <Route path="/track-shipment" element={<TrackShipment />} />
+          <Route path="/create-shipment" element={<CreateShipment />} />
+          <Route path="/agent-creation-success" element={<AgentCreationSuccess />} />
+          <Route path="/shipment-creation-success" element={<ShipmentCreationSuccess />} />
+          <Route path="/user-register" element={<RegisterUser />} />
+          <Route path="/login-admin" element={<LoginAdmin />} />
+          <Route path="/login-users" element={<LoginNonAdmins />} />
+          <Route path="/register-super-admin" element={<RegisterSuperAdmin />} />
+          <Route path="/update-current-location" element={<UpdateShipmentLocation />} />
+          <Route path="/checkout/:shipmentId" element={<CheckOut />} />
+          <Route path="/payment-callback" element={<PaymentCallback />} />
+          <Route path="/get-a-quote" element={<GetAQuote />} />
+          <Route path="/*" element={<Four04 />} />
         </Routes>
 
         <Footer />
@@ -142,4 +155,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

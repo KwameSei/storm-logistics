@@ -1,0 +1,56 @@
+@import '../../../components/styles/variables.scss';
+
+.approve {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .approve_container {
+    align-items: center;
+    margin-top: 13rem;
+    margin-bottom: 5rem;
+    text-align: center;
+    width: 80%;
+    background-color: $storm-white;
+    padding: 5rem;
+
+    h1 {
+    font-family: $storm-rubik;
+    font-size: $storm-font-size-xxl;
+    font-weight: $storm-font-weight-boldest;
+    color: $storm-blue;
+    }
+
+    .unordered_list {
+
+      .list {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        padding: 1rem;
+        border-bottom: 1px solid $storm-blue;
+
+        .list_container {
+          // display: flex;
+          // align-items: center;
+          flex-direction: column;
+          span {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            h3, p{
+              margin-top: 3px;
+              margin-right: 2rem;
+            }
+          }
+        }
+
+        button {
+          // Set button dimensions independently
+          height: 2.5rem;
+          width: 8rem;
+        }
+      }
+    }
+  }
+}

@@ -17,6 +17,7 @@ const Sidebar = () => {
   const currentRole = useSelector(state => state.user.currentUser.data.role);
 
   // State for managing dropdown menus
+  const [agentDropdown, setAgentDropdown] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [shipmentDropdown, setShipmentDropdown] = useState(false);
@@ -42,7 +43,7 @@ const Sidebar = () => {
       'SuperAdmin', 'Users', 'Admin', 'create-admin', 'create-shipment',
       'track-shipment', 'approve-shipments', 'get-all-shipments', 'daily-shipment-chart', 'users', 'messages',
       'shipment-piechart', 'analytics', 'users-geography', 'file-manager', 'orders', 'settings', 'get-all-payments',
-      'create-hs-codes'
+      'create-hs-codes', 'approve-agents'
     ],
     Admin: ['Users', 'Admin'],
     User: ['create-shipment', 'track-shipment']
@@ -150,6 +151,19 @@ const Sidebar = () => {
                     <Link to={`/${currentRole.toLowerCase()}-dashboard/get-all-users`} className={classes.link}>
                       <span className={classes.dashboard}>Get All Users</span>
                     </Link>
+                  </div>
+                )}
+                <div className={classes.link} onClick={() => setAgentDropdown(!agentDropdown)}>
+                  <span className={classes.dashboard}>Agents</span>
+                  <ArrowDropDown className={`${classes.dropdown_icon} ${agentDropdown ? classes.rotate : ''}`} />
+                </div>
+                {agentDropdown && (
+                  <div className={classes.dropdown}>
+                    {hasPermission('approve-agents') && (
+                      <Link to={`/${currentRole.toLowerCase()}-dashboard/approve-agents`} className={classes.link}>
+                        <span className={classes.dashboard}>Approve Agents</span>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

@@ -23,11 +23,18 @@ const agentSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    // required: [true, 'Please enter your phone number'],
+    unique: true,
   },
   country: {
     country: { type: String },
     state: { type: String },
   },
+  // phoneOtp: String,
+  // country: {
+  //   country: { type: String },
+  //   state: { type: String },
+  // },
   transactions: {
     type: String
   },
@@ -49,7 +56,7 @@ const agentSchema = new mongoose.Schema({
     url: String,
     public_id: String
   },
-  image_mimetype: String
+  image_mimetype: String,
 }, {
   timestamps: true
 })
@@ -127,7 +134,7 @@ agentSchema.post('save', async function(agent) {
         })
       } else {
         // Update the total number of agents for the current day
-        dailyAgentssData.totalAgents += 1
+        dailyAgentsData.totalAgents += 1
       }
     }
 
